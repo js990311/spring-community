@@ -64,8 +64,8 @@ class PostServiceTest {
         Post post1 = postService.readPostById(postId1);
         Post post2 = postService.readPostById(postId2);
 
-        List<Post> postsInBoard1 = postService.readPostByBoard(board1.getId());
-        List<Post> postsInBoard2 = postService.readPostByBoard(board2.getId());
+        List<Post> postsInBoard1 = postService.readPostByBoardId(board1.getId());
+        List<Post> postsInBoard2 = postService.readPostByBoardId(board2.getId());
 
         assertEquals(postsInBoard1.get(0).getBoard().getId(), board1.getId(), "board1 test");
         assertEquals(postsInBoard2.get(0).getBoard().getId(), board2.getId(), "board2 test");

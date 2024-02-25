@@ -1,0 +1,21 @@
+<header class="mb-5 border-bottom" th:fragment="header">
+    <div class="container">
+        <div class="row d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <h1 class="col-9">
+            <a href="/">HOME</a>
+        </h1>
+        <div class="col-3">
+            <form sec:authorize="isAnonymous()" action="/login_proc" method="post">
+                <div class="row">
+                    <input class="p-0 col form-control " type="text" name="email" id="email" placeholder="email">
+                    <input class="p-0 col form-control" type="password" name="password" id="password" placeholder="password">
+                    <button class="col btn btn-primary" type="submit">로그인</button>
+                </div>
+            </form>
+            <div class="row" sec:authorize="isAuthenticated()">
+                <p class="col" sec:authentication="name"></p> <!-- 로그인된 사람의 username을 가져오는 방언 -->
+                <a class="col btn btn-primary p-2" href="/member/regist">로그아웃</a>
+            </div>
+        </div>
+    </div></div>
+</header>

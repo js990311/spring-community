@@ -12,12 +12,13 @@ spring:
         # show_sql: true
         format_sql : true
         use_sql_comments : true
+        default_batch_fetch_size : 100
 
 logging:
   level:
-    org:
-      hibernate:
-        SQL : debug
-#        type:
-#          descriptor:
-#            sql: trace
+    # spring logging group. include org.hibernate.SQL
+    sql: debug
+    web: debug # include web, http,
+#    org:
+#      hibernate:
+#        SQL : debug

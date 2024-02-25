@@ -32,7 +32,11 @@ public class PostService {
         return post;
     }
 
-    public List<Post> readPostByBoard(Long boardId){
+    public List<Post> readPostByBoardName(String postName){
+        return postRepository.findAll();
+    }
+
+    public List<Post> readPostByBoardId(Long boardId){
         return postRepository.findByBoardId(boardId);
     }
 

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="basic-layout (title, content)">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${title}">레이아웃 타이틀</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <header th:replace="~{fragment/header::header}"></header>
+    <div th:replace="${content}"></div>
+    <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+</body>
+</html>
