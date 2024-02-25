@@ -1,6 +1,7 @@
 package com.toyproject.community.service;
 
 import com.toyproject.community.domain.Board;
+import com.toyproject.community.form.BoardForm;
 import com.toyproject.community.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public void createBoard(String name){
-        Board board = Board.createBoard(name);
+    public void createBoard(String name, String description){
+        Board board = Board.createBoard(name, description);
         boardRepository.save(board);
     }
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+    <title>게시판 리스트</title>
+</head>
+<body>
+<div id="body-content" class="container">
+    <h1>게시판 생성</h1>
+    <form action="/b/create" method="post" th:object="${boardForm}">
+        <input class="form-control" type="text" th:field="*{name}">
+        <input class="form-control" type="textarea" th:field="*{description}">
+        <button type="submit" class="btn btn-primary">게시판 생성</button>
+    </form>
+</div>
+</body>
+</html>

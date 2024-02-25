@@ -19,17 +19,21 @@ public class Board {
     @Column
     private String name;
 
+    @Column
+    private String description;
+
     @OneToMany(mappedBy = "board")
     private List<BoardManager> boardManagers;
 
     @OneToMany(mappedBy = "board")
     private List<Post> posts;
 
-    Board(String name){
+    Board(String name, String description){
         this.name = name;
+        this.description = description;
     }
 
-    public static Board createBoard(String name){
-        return new Board(name);
+    public static Board createBoard(String name, String description){
+        return new Board(name, description);
     }
 }
