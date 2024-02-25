@@ -1,12 +1,15 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Board;
+import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
+import com.toyproject.community.dto.ReadCommentDto;
 import com.toyproject.community.dto.ReadPostDto;
 import com.toyproject.community.form.CommentForm;
 import com.toyproject.community.form.PostForm;
 import com.toyproject.community.security.MemberAuthenticationToken;
+import com.toyproject.community.service.CommentService;
 import com.toyproject.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/create")
     public String createPostView(@RequestParam("boardid") Long boardid, Model model){
@@ -61,6 +65,10 @@ public class PostController {
 
         ReadPostDto readPostDto = new ReadPostDto(post);
         model.addAttribute("post",readPostDto);
+
+        List<Comment> comments = commentService.readAllCommentByPost(postId);
+        List<ReadCommentDto> readCommentDto = comments.stream().map(ReadCommentDto::new).collect(Collectors.toList());
+        model.addAttribute("comments", readCommentDto);
 
         CommentForm commentForm = new CommentForm();
         commentForm.setPostId(postId);

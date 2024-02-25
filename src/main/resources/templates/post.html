@@ -6,7 +6,7 @@
 <body>
 <div id="body-content" class="container">
   <div class="border" id="post-content">
-    <div class="row border-top border-bottom bg-light mb-5">
+    <div class="row border-top border-bottom bg-light">
       <p class="col-9 h3" th:text="${post.title}">
         게시글 제목
       </p>
@@ -16,6 +16,15 @@
       <p th:text="${post.content}">게시글 본문</p>
     </div>
   </div>
+
+  <ul class="my-5 bg-body rounded shodow-sm">
+    <h5>댓글목록</h5>
+    <li class="text-body-secondary" th:each="comment : ${comments}">
+      <p th:text="${comment.writer}">작성자</p>
+      <p th:text="${comment.content}">제목</p>
+    </li>
+  </ul>
+
   <form action="/comment/create" method="post" th:object="${commentForm}">
     <div class="row">
       <div class="col-10">
