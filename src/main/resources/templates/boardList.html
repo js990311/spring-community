@@ -10,8 +10,10 @@
   <ul class="list-group">
     <li class="list-group-item d-flex justify-content-between align-items-start" th:each="board:${boards}">
       <div class="ms-2 me-auto">
-        <div class="fw-bold" th:text="${board.name}">Subheading</div>
-        <span th:text="${board.description}">Content for list item</span>
+        <a href="#" th:href="@{/b/{boardId}(boardId=${board.name})}">
+          <h3 class="fw-bold" th:text="${board.name}">게시판이름</h3>
+          <span th:text="${board.description}">게시판 소개</span>
+        </a>
       </div>
     </li>
   </ul>

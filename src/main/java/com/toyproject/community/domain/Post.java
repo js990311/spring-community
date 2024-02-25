@@ -1,6 +1,6 @@
 package com.toyproject.community.domain;
 
-import com.toyproject.community.dto.PostDto;
+import com.toyproject.community.dto.CreatePostDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class Post {
      * domain 패키지 외부에선 조작하지 못하도록 protected 접근 제한자
      * @param postDto
      */
-    Post(PostDto postDto){
+    Post(CreatePostDto postDto){
         this.title = postDto.getTitle();
         this.content = postDto.getContent();
         this.board = postDto.getBoard();
@@ -49,7 +49,7 @@ public class Post {
         this.content = content;
     }
 
-    public static Post createPost(PostDto postDto){
+    public static Post createPost(CreatePostDto postDto){
         Post post = new Post(postDto);
         return post;
     }

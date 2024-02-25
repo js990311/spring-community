@@ -1,6 +1,5 @@
 package com.toyproject.community.domain;
 
-import com.toyproject.community.dto.PostDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

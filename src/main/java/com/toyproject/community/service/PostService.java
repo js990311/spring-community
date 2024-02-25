@@ -1,8 +1,7 @@
 package com.toyproject.community.service;
 
-import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.PostDto;
+import com.toyproject.community.dto.CreatePostDto;
 import com.toyproject.community.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long createPost(PostDto postDto){
+    public Long createPost(CreatePostDto postDto){
         Post post = Post.createPost(postDto);
         postRepository.save(post);
         return post.getId();
@@ -32,8 +31,8 @@ public class PostService {
         return post;
     }
 
-    public List<Post> readPostByBoardName(String postName){
-        return postRepository.findAll();
+    public List<Post> readPostByBoardName(String boardName){
+        return postRepository.findByBoardName(boardName);
     }
 
     public List<Post> readPostByBoardId(Long boardId){
