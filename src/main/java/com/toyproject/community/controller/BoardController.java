@@ -25,16 +25,16 @@ public class BoardController {
     private final BoardService boardService;
     private final PostService postService;
 
-    @GetMapping("/{boardName}")
-    public String boardName(@PathVariable("boardName") String boardName, Model model){
+    @GetMapping("/{boardId}")
+    public String boardName(@PathVariable("boardId") Long boardId, Model model){
         Board board;
         try{
-            board = boardService.findByName(boardName);
+            board = boardService.findById(boardId);
         }catch (Exception e){
             // TODO error 페이지
             return "redirect:/b/list";
         }
-        List<Post> posts = postService.readPostByBoardName(boardName);
+        List<Post> posts = postService.readPostByBoardId(boardId);
         List<ReadPostDto> postDtos = posts.stream().map(ReadPostDto::new).collect(Collectors.toList());
         model.addAttribute("posts",postDtos);
         model.addAttribute("board", board);
@@ -44,7 +44,7 @@ public class BoardController {
     @GetMapping({"/list", "/"})
     public String readBoardList(Model model){
         List<Board> boardList = boardService.findAllBoard();
-        List<BoardDto> boards = boardList.stream().map(b -> new BoardDto(b.getName(),b.getDescription())).collect(Collectors.toList());
+        List<BoardDto> boards = boardList.stream().map(BoardDto::new).collect(Collectors.toList());
         model.addAttribute("boards", boards);
         if(!boards.isEmpty()){
             log.info(boards.get(0).getDescription());

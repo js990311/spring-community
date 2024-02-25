@@ -26,7 +26,13 @@ public class BoardService {
 
     public Board findByName(String name){
         return boardRepository.findByName(name).orElseThrow(
-                ()-> new EntityNotFoundException("member not found")
+                ()-> new EntityNotFoundException("board not found")
+        );
+    }
+
+    public Board findById(Long id){
+        return boardRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("board not found")
         );
     }
 

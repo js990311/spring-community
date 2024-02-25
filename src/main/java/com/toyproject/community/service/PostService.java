@@ -1,18 +1,39 @@
 package com.toyproject.community.service;
 
+import com.toyproject.community.domain.Board;
+import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.dto.CreatePostDto;
+import com.toyproject.community.form.PostForm;
+import com.toyproject.community.repository.BoardRepository;
 import com.toyproject.community.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final BoardRepository boardRepository;
+
+    public Long createPost(PostForm postForm, Member member){
+        Board board = boardRepository.findById(postForm.getBoardId()).orElseThrow(
+                ()->new EntityNotFoundException("board not found")
+        );
+        CreatePostDto createPostDto = new CreatePostDto(
+                member,
+                board,
+                postForm.getTitle(),
+                postForm.getContent()
+        );
+        return createPost(createPostDto);
+    }
 
     @Transactional
     public Long createPost(CreatePostDto postDto){
@@ -30,6 +51,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow();
         return post;
     }
+
 
     public List<Post> readPostByBoardName(String boardName){
         return postRepository.findByBoardName(boardName);

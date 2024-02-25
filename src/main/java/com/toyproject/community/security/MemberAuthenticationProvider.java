@@ -33,10 +33,14 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
         }
 
         // 인증 성공
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                userName, password, userDetails.getAuthorities()
-        );
-
+        UsernamePasswordAuthenticationToken token;
+        if(userDetails instanceof MemberDetails){
+            token = new MemberAuthenticationToken((MemberDetails) userDetails);
+        }else{
+            token = new UsernamePasswordAuthenticationToken(
+                    userName, null, userDetails.getAuthorities()
+            );
+        }
         return token;
     }
 

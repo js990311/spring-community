@@ -12,23 +12,22 @@
     <p th:if="${#lists.isEmpty(posts)}">게시글이 하나도 없습니다. 첫 게시글을 작성해주세요</p>
     <ul class="list-group">
         <li th:each="post:${posts}">
-            <a class="list-group-item list-group-item-action active" aria-current="true"
-               th:href="@{/p/{$post.id}}">
+            <a class="list-group-item list-group-item-action" aria-current="true"
+               th:href="@{/p/{postId}(postId=${post.id})}">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">
-                        <a th:text="${post.title}"></a>
+                    <h5 class="mb-1" th:text="${post.title}">
+                        게시글 제목
                     </h5>
                     <!-- TODO jpa auditing
                     <small th:text="${post.date}">작성일자</small>
                     -->
                 </div>
-                <p class="mb-1" th:text="by ${post.member}"></p>
+                <p class="mb-1" th:text="|by ${post.memberName}|"></p>
             </a>
         </li>
     </ul>
-    <!--
-    <a class="w-100 btn-primary btn" href="/p/create">게시글 작성</a>
-    -->
+    <a class="w-100 btn-primary btn"
+       th:href="@{/p/create(boardid = ${board.id})}">게시글 작성</a>
 </div>
 </body>
 </html>

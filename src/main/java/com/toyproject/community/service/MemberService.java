@@ -7,6 +7,7 @@ import com.toyproject.community.dto.MemberDto;
 import com.toyproject.community.repository.CommentRepository;
 import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
+import com.toyproject.community.security.MemberDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -67,7 +68,8 @@ public class MemberService implements UserDetailsService {
         );
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("USER"));
-        User user = new User(member.getEmail(), member.getPassword(), authorities);
+        // User user = new User(member.getEmail(), member.getPassword(), authorities);
+        User user = new MemberDetails(member, authorities);
         return user;
     }
 }
