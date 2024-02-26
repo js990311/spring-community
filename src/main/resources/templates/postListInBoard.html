@@ -11,8 +11,8 @@
     </div>
     <p th:if="${#lists.isEmpty(posts)}">게시글이 하나도 없습니다. 첫 게시글을 작성해주세요</p>
     <ul class="list-group">
-        <li th:each="post:${posts}">
-            <a class="list-group-item list-group-item-action" aria-current="true"
+        <li th:each="post:${posts}" class="list-group-item list-group-item-action">
+            <a class="" aria-current="true"
                th:href="@{/p/{postId}(postId=${post.id})}">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1" th:text="${post.title}">

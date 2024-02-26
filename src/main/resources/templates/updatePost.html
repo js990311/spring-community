@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+  <title>게시글 수정</title>
+</head>
+<body>
+<div id="body-content" class="container">
+  <h1>게시글 수정</h1>
+  <form th:action="@{/p/{postId}/update(postId=${postForm.id})}" method="post" th:object="${postForm}">
+    <input class="form-control" type="text" th:field="*{title}">
+    <input class="form-control" type="text" th:field="*{content}">
+    <input type="hidden" th:field="*{id}">
+    <button type="submit" class="btn btn-primary">게시판 수정</button>
+  </form>
+</div>
+</body>
+</html>

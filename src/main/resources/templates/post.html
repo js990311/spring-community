@@ -16,12 +16,23 @@
       <p th:text="${post.content}">게시글 본문</p>
     </div>
   </div>
+  <div class="my-2 row">
+    <div class="col-6">
+      <a class="btn btn-success" th:href="@{/p/{postId}/update(postId=${post.id})}">수정</a>
+    </div>
+    <div class="col-6">
+      <a class="btn btn-danger" th:href="@{/p/{postId}/delete(postId=${post.id})}">삭제</a>
+    </div>
+  </div>
 
-  <ul class="my-5 bg-body rounded shodow-sm">
+  <ul class="my-5 bg-body rounded shodow-sm list-group">
     <h5>댓글목록</h5>
-    <li class="text-body-secondary" th:each="comment : ${comments}">
-      <p th:text="${comment.writer}">작성자</p>
-      <p th:text="${comment.content}">제목</p>
+    <li class="text-body-secondary list-group-item" th:each="comment : ${comments}">
+      <div class="row">
+        <p class="col-10" th:text="${comment.writer}">작성자</p>
+        <a th:href="@{/comment/{commentId}/delete(commentId=${comment.id})}" class="col-2">삭제</a>
+      </div>
+      <p th:text="${comment.content}">댓글 내용</p>
     </li>
   </ul>
 

@@ -4,12 +4,11 @@ import com.toyproject.community.domain.Member;
 import com.toyproject.community.form.CommentForm;
 import com.toyproject.community.security.MemberAuthenticationToken;
 import com.toyproject.community.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -28,5 +27,16 @@ public class CommentController {
         Member member = memberInfo.getMember();
         commentService.createComment(commentForm, member);
         return "redirect:/p/"+commentForm.getPostId();
+    }
+
+    @GetMapping("/{commentId}/delete")
+    public String deleteComment(@PathVariable Long commentId, HttpServletRequest request){
+        commentService.deleteComment(commentId);
+
+        if(request.getHeader("Referer") != null){
+            return "redirect:/";
+        }else{
+            return "redirect:" + request.getHeader("Referer");
+        }
     }
 }

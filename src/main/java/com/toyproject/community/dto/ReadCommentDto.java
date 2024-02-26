@@ -6,10 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class ReadCommentDto {
+    Long id;
     String writer;
     String content;
 
     public ReadCommentDto(Comment comment){
+        this.id = comment.getId();
         this.writer = comment.getMember().getEmail();
         this.content = comment.getContent();
     }
