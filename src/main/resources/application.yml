@@ -14,11 +14,20 @@ spring:
         use_sql_comments : true
         default_batch_fetch_size : 100
 
+  messages:
+    basename: validation
+
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true
 logging:
   level:
     # spring logging group. include org.hibernate.SQL
     sql: debug
     web: debug # include web, http,
+    com.toyproject.community:
+      debug
 #    org:
 #      hibernate:
 #        SQL : debug

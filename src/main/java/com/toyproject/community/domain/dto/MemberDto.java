@@ -1,4 +1,4 @@
-package com.toyproject.community.dto;
+package com.toyproject.community.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

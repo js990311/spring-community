@@ -3,18 +3,16 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.CreatePostDto;
-import com.toyproject.community.form.PostForm;
+import com.toyproject.community.domain.dto.CreatePostDto;
+import com.toyproject.community.domain.form.PostForm;
 import com.toyproject.community.repository.BoardRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

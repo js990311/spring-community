@@ -3,8 +3,8 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.CommentDto;
-import com.toyproject.community.form.CommentForm;
+import com.toyproject.community.domain.dto.CommentDto;
+import com.toyproject.community.domain.form.CommentForm;
 import com.toyproject.community.repository.CommentRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

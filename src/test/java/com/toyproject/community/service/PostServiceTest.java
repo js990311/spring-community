@@ -3,7 +3,7 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.CreatePostDto;
+import com.toyproject.community.domain.dto.CreatePostDto;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

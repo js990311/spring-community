@@ -8,6 +8,7 @@
     <h1>게시판 생성</h1>
     <form action="/b/create" method="post" th:object="${boardForm}">
         <input class="form-control" type="text" th:field="*{name}">
+        <p th:errors="*{name}"></p>
         <input class="form-control" type="text" th:field="*{description}">
         <button type="submit" class="btn btn-primary">게시판 생성</button>
     </form>

@@ -1,4 +1,4 @@
-package com.toyproject.community.dto;
+package com.toyproject.community.domain.dto;
 
 import com.toyproject.community.domain.Board;
 import lombok.AllArgsConstructor;

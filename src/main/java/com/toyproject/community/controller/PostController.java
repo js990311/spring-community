@@ -1,23 +1,23 @@
 package com.toyproject.community.controller;
 
-import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.ReadCommentDto;
-import com.toyproject.community.dto.ReadPostDto;
-import com.toyproject.community.form.CommentForm;
-import com.toyproject.community.form.PostForm;
-import com.toyproject.community.form.UpdatePostForm;
-import com.toyproject.community.security.MemberAuthenticationToken;
+import com.toyproject.community.domain.dto.ReadCommentDto;
+import com.toyproject.community.domain.dto.ReadPostDto;
+import com.toyproject.community.domain.form.CommentForm;
+import com.toyproject.community.domain.form.PostForm;
+import com.toyproject.community.domain.form.UpdatePostForm;
+import com.toyproject.community.authentication.MemberAuthenticationToken;
 import com.toyproject.community.service.CommentService;
 import com.toyproject.community.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Update;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,14 +41,12 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public String createPost(@ModelAttribute PostForm postForm, Authentication authentication, Model model){
-        log.info("PostController-createPost");
-        MemberAuthenticationToken memberInfo = null;
-        if(authentication instanceof MemberAuthenticationToken){
-            memberInfo = (MemberAuthenticationToken) authentication;
-        }else{
-            return "redirect:/member/login";
+    public String createPost(@Valid @ModelAttribute PostForm postForm, BindingResult bindingResult, Authentication authentication, Model model){
+        if(bindingResult.hasErrors()){
+            log.debug("errors={}",bindingResult);
+            return "createPost";
         }
+        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
         Member member = memberInfo.getMember();
         postService.createPost(postForm, member);
         StringBuilder sb = new StringBuilder();
@@ -87,13 +85,7 @@ public class PostController {
 
     @GetMapping("/{postID}/update")
     public String updatePostView(@PathVariable("postID") Long postId, Model model, Authentication authentication){
-        MemberAuthenticationToken memberInfo = null;
-
-        if(authentication instanceof MemberAuthenticationToken){
-            memberInfo = (MemberAuthenticationToken) authentication;
-        }else{
-            return "redirect:/member/login";
-        }
+        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
         Member member = memberInfo.getMember();
         Post post = postService.readPostById(postId);
         UpdatePostForm postForm = new UpdatePostForm(post);
@@ -101,8 +93,12 @@ public class PostController {
         return "updatePost";
     }
 
-    @PostMapping("/{postID}/update")
-    public String updatePostView(@PathVariable("postID") Long postId, @ModelAttribute UpdatePostForm updatePostForm){
+    @PutMapping("/{postID}/update")
+    public String updatePostView(@PathVariable("postID") Long postId, @Valid @ModelAttribute(name = "postForm") UpdatePostForm updatePostForm, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            log.debug("errors={}", bindingResult);
+            return "updatePost";
+        }
         postService.updatePost(updatePostForm.getId(), updatePostForm.getTitle(), updatePostForm.getContent());
         return "redirect:/p/" + postId;
     }

@@ -1,9 +1,8 @@
 package com.toyproject.community.config;
 
-import com.toyproject.community.security.CustomAuthenticationFailureHandler;
+import com.toyproject.community.authentication.CustomAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.AbstractConfiguredSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,11 +17,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((request)->request
-                .requestMatchers("/", "/member/regist", "/member/login*").permitAll()
+                .requestMatchers("/", "/member/regist", "/member/login*", "/b/list").permitAll()
                 .requestMatchers("/css/**").permitAll()
                 .requestMatchers("/js/**").permitAll()
-                // .anyRequest().authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
+                // .anyRequest().permitAll()
         );
         http.formLogin((formLogin)->
             formLogin.loginPage("/member/login")

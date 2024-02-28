@@ -1,8 +1,8 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Member;
-import com.toyproject.community.form.CommentForm;
-import com.toyproject.community.security.MemberAuthenticationToken;
+import com.toyproject.community.domain.form.CommentForm;
+import com.toyproject.community.authentication.MemberAuthenticationToken;
 import com.toyproject.community.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,7 @@ public class CommentController {
 
     @PostMapping("/create")
     public String createComment(@ModelAttribute CommentForm commentForm, Authentication authentication){
-        MemberAuthenticationToken memberInfo = null;
-        if(authentication instanceof MemberAuthenticationToken){
-            memberInfo = (MemberAuthenticationToken) authentication;
-        }else{
-            return "redirect:/member/login";
-        }
+        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
         Member member = memberInfo.getMember();
         commentService.createComment(commentForm, member);
         return "redirect:/p/"+commentForm.getPostId();

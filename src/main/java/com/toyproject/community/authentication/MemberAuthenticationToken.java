@@ -1,11 +1,8 @@
-package com.toyproject.community.security;
+package com.toyproject.community.authentication;
 
 import com.toyproject.community.domain.Member;
 import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 @Getter
 public class MemberAuthenticationToken extends UsernamePasswordAuthenticationToken {

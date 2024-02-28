@@ -1,7 +1,6 @@
 package com.toyproject.community.service;
 
-import com.toyproject.community.domain.Member;
-import com.toyproject.community.dto.MemberDto;
+import com.toyproject.community.domain.dto.MemberDto;
 import com.toyproject.community.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.swing.plaf.metal.MetalMenuBarUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 

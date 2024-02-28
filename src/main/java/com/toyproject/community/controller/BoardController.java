@@ -2,16 +2,18 @@ package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.dto.BoardDto;
-import com.toyproject.community.dto.ReadPostDto;
-import com.toyproject.community.form.BoardForm;
+import com.toyproject.community.domain.dto.BoardDto;
+import com.toyproject.community.domain.dto.ReadPostDto;
+import com.toyproject.community.domain.form.BoardForm;
 import com.toyproject.community.service.BoardService;
 import com.toyproject.community.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,7 +62,11 @@ public class BoardController {
     }
 
     @PostMapping("/create")
-    public String createBoard(@ModelAttribute BoardForm boardForm){
+    public String createBoard(@Valid @ModelAttribute BoardForm boardForm, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            log.debug("errors = {}", bindingResult);
+            return "createBoard";
+        }
         boardService.createBoard(boardForm.getName(), boardForm.getDescription());
         log.info("POST /b/create?desc=",boardForm.getDescription());
         return "redirect:/b/list";
