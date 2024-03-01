@@ -7,12 +7,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -40,10 +43,29 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String getLogin(@RequestParam(name = "error", required = false) String error, Model model){
+    public String getLogin(Model model, HttpServletRequest request){
         model.addAttribute("memberForm", new MemberForm());
-        model.addAttribute("exception", error);
         return "login";
+    }
+
+    @PostMapping("/login")
+    public String postLogin(@Valid @ModelAttribute MemberForm memberForm, BindingResult bindingResult, HttpServletRequest request){
+        AuthenticationException exception = (AuthenticationException) request.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+
+        if(exception instanceof BadCredentialsException){
+            bindingResult.reject("BadCredentials");
+        }else if(exception instanceof UsernameNotFoundException){
+            bindingResult.reject("UserNotFound");
+        }else if(exception != null){
+            bindingResult.reject("AuthenticationException");
+        }
+
+        if(bindingResult.hasErrors()){
+            log.warn("errors={}",bindingResult.getAllErrors());
+            return "login";
+        }
+
+        return "forward:/member/login_process";
     }
 
     @GetMapping("/logout")

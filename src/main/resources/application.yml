@@ -15,7 +15,7 @@ spring:
         default_batch_fetch_size : 100
 
   messages:
-    basename: validation
+    basename: validation, securityMessage
 
   mvc:
     hidden-method:

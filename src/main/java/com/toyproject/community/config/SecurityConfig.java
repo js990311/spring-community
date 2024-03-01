@@ -1,6 +1,5 @@
 package com.toyproject.community.config;
 
-import com.toyproject.community.authentication.CustomAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.ForwardAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
@@ -25,7 +25,7 @@ public class SecurityConfig {
         );
         http.formLogin((formLogin)->
             formLogin.loginPage("/member/login")
-                    .loginProcessingUrl("/login_proc")
+                    .loginProcessingUrl("/member/login_process")
                     .usernameParameter("email")
                     .passwordParameter("password")
                     .defaultSuccessUrl("/", true)
@@ -37,7 +37,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationFailureHandler failureHandler(){
-        return new CustomAuthenticationFailureHandler();
+        return new ForwardAuthenticationFailureHandler("/member/login");
     }
 
     @Bean
