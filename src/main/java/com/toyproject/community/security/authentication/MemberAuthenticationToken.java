@@ -1,4 +1,4 @@
-package com.toyproject.community.authentication;
+package com.toyproject.community.security.authentication;
 
 import com.toyproject.community.domain.Member;
 import lombok.Getter;

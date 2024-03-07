@@ -23,10 +23,8 @@ public class Board {
     private String description;
 
     @OneToMany(mappedBy = "board")
-    private List<BoardManager> boardManagers;
-
-    @OneToMany(mappedBy = "board")
     private List<Post> posts;
+
 
     Board(String name, String description){
         this.name = name;

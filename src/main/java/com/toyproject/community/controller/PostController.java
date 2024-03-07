@@ -8,7 +8,7 @@ import com.toyproject.community.domain.dto.ReadPostDto;
 import com.toyproject.community.domain.form.CommentForm;
 import com.toyproject.community.domain.form.PostForm;
 import com.toyproject.community.domain.form.UpdatePostForm;
-import com.toyproject.community.authentication.MemberAuthenticationToken;
+import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.service.CommentService;
 import com.toyproject.community.service.PostService;
 import jakarta.validation.Valid;

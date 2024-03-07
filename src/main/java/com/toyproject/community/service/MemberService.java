@@ -4,10 +4,11 @@ import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.domain.dto.MemberDto;
+import com.toyproject.community.domain.role.MemberRole;
 import com.toyproject.community.repository.CommentRepository;
 import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
-import com.toyproject.community.authentication.MemberDetails;
+import com.toyproject.community.security.authentication.MemberDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -67,7 +68,10 @@ public class MemberService implements UserDetailsService {
                 }
         );
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
+        List<MemberRole> memberRoles = member.getMemberRoles();
+
+        // TODO
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         // User user = new User(member.getEmail(), member.getPassword(), authorities);
         User user = new MemberDetails(member, authorities);
         return user;
