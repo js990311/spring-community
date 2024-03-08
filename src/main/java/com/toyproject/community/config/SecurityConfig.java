@@ -3,10 +3,15 @@ package com.toyproject.community.config;
 import com.toyproject.community.security.authorization.CustomAuthorizationManager;
 import com.toyproject.community.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +33,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> permitAll = new ArrayList<>(List.of(new String[]{
-                "/", "/member/regist", "/member/login*", "/b/list", "/css/**","/js/**", "/setting"
+                "/", "/member/regist", "/member/login*", "/b/list", "/css/**","/js/**", "/setting",
         }));
 
         http.authorizeHttpRequests((request)->{
@@ -67,6 +72,24 @@ public class SecurityConfig {
 
     @Bean
     public CustomAuthorizationManager authorizationManager(){
-        return new CustomAuthorizationManager(roleService);
+        return new CustomAuthorizationManager(roleService, roleHierarchy());
+    }
+
+
+    @Deprecated
+    @Bean
+    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toH2Console());
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy(){
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy(
+            roleService.getRoleHierarchyInfo()
+        );
+        return roleHierarchy;
     }
 }

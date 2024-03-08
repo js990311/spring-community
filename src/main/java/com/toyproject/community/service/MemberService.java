@@ -9,6 +9,7 @@ import com.toyproject.community.repository.CommentRepository;
 import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
 import com.toyproject.community.security.authentication.MemberDetails;
+import com.toyproject.community.service.role.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,14 +31,15 @@ public class MemberService implements UserDetailsService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Transactional
     public Long registMember(String email, String password){
         String encodedPassword = passwordEncoder.encode(password);
         Member member = Member.registMember(email, encodedPassword);
         memberRepository.save(member);
+        roleService.registMember(member);
         return member.getId();
     }
 
@@ -71,7 +73,13 @@ public class MemberService implements UserDetailsService {
         List<MemberRole> memberRoles = member.getMemberRoles();
 
         // TODO
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        member.getMemberRoles().forEach(role->{
+            String auth = role.getRole().getRoleName().toString();
+            authorities.add(
+                    new SimpleGrantedAuthority(auth)
+            );
+        });
+
         // User user = new User(member.getEmail(), member.getPassword(), authorities);
         User user = new MemberDetails(member, authorities);
         return user;

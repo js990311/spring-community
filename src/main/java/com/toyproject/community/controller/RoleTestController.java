@@ -1,5 +1,6 @@
 package com.toyproject.community.controller;
 
+import com.toyproject.community.domain.role.RoleName;
 import com.toyproject.community.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,9 @@ public class RoleTestController {
     @GetMapping("/setting")
     @ResponseBody
     public String setAll(){
-        roleService.addRole("ROLE_ADMIN");
-        roleService.addRole("ROLE_USER");
-        roleService.addRole("ROLE_MANAGER");
+//        roleService.addRole(RoleName.ROLE_USER);
+//        roleService.addRole(RoleName.ROLE_MANAGER);
+//        roleService.addRole(RoleName.ROLE_ADMIN);
 
         roleService.addResource("/role_admin",1);
         roleService.addResource("/role_user", 1);

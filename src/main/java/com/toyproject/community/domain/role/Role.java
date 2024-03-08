@@ -11,14 +11,16 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue
-    @Column(name = "role_id")
-    private Long id;
-
     @Column(name = "role_name", unique = true)
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private RoleName roleName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_role")
+    private Role parentRole;
 
     @OneToMany(mappedBy = "role")
     private List<MemberRole> memberRoles;
@@ -26,7 +28,7 @@ public class Role {
     @OneToMany(mappedBy = "role")
     private Set<ResourceRole> resourceRoles;
 
-    public Role(String roleName){
+    public Role(RoleName roleName){
         this.roleName = roleName;
     }
 }

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
 import org.springframework.security.authorization.AuthoritiesAuthorizationManager;
@@ -23,11 +24,14 @@ import java.util.function.Supplier;
 public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final RoleService roleService;
+    private final RoleHierarchy roleHierarchy;
     private final AuthoritiesAuthorizationManager delegate = new AuthoritiesAuthorizationManager();
 
     @Autowired
-    public CustomAuthorizationManager(RoleService roleService) {
+    public CustomAuthorizationManager(RoleService roleService, RoleHierarchy roleHierarchy) {
         this.roleService = roleService;
+        this.roleHierarchy = roleHierarchy;
+        delegate.setRoleHierarchy(this.roleHierarchy);
     }
 
     @Override

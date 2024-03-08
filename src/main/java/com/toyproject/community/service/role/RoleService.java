@@ -1,10 +1,7 @@
 package com.toyproject.community.service.role;
 
 import com.toyproject.community.domain.Member;
-import com.toyproject.community.domain.role.MemberRole;
-import com.toyproject.community.domain.role.Resource;
-import com.toyproject.community.domain.role.ResourceRole;
-import com.toyproject.community.domain.role.Role;
+import com.toyproject.community.domain.role.*;
 import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.role.ResourceRepository;
 import com.toyproject.community.repository.role.ResourceRoleRepository;
@@ -35,39 +32,46 @@ public class RoleService {
 
     private LinkedHashMap<RequestMatcher, List<String >> resourceMap;
 
-    @Transactional
     public void addResource(String url, Integer orderNum){
         resourceRepository.save(new Resource(url, orderNum));
     }
 
-    @Transactional
-    public void addRole(String roleName){
+    public void addRole(RoleName roleName){
         roleRepository.save(new Role(roleName));
     }
 
+    public void registMember(Member member){
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER).orElseThrow(EntityNotFoundException::new);
+        setMemberRole(member, role);
+    }
+
     public void setMemberRole(String memberEmail, String roleName){
-        Role role = roleRepository.findByRoleName(roleName).orElseThrow(EntityNotFoundException::new);
+        RoleName roleNameEnum = RoleName.valueOf(roleName);
+        Role role = roleRepository.findByRoleName(roleNameEnum).orElseThrow(EntityNotFoundException::new);
         Member member = memberRepository.findByEmail(memberEmail).orElseThrow(EntityNotFoundException::new);
+        setMemberRole(member,role);
     }
 
     public void setResourceRole(String resourceName, String roleName){
-        Role role = roleRepository.findByRoleName(roleName).orElseThrow(EntityNotFoundException::new);
+        RoleName roleNameEnum = RoleName.valueOf(roleName);
+        Role role = roleRepository.findByRoleName(roleNameEnum).orElseThrow(EntityNotFoundException::new);
         Resource resource = resourceRepository.findByUrl(resourceName).orElseThrow(EntityNotFoundException::new);
         setResourceRole(resource, role);
     }
 
-    @Transactional
     private void setMemberRole(Member member, Role role){
         em.persist(new MemberRole(member, role));
     }
 
-    @Transactional
     private void setResourceRole(Resource resource, Role role){
         em.persist(new ResourceRole(resource, role));
     }
 
 
-    @Transactional
+    /**
+     * 리소스에 대한 권한 매핑 정보를 설정함
+     * @return
+     */
     private LinkedHashMap<RequestMatcher, List<String >> setResourceMap(){
         List<ResourceRole> resourceRoles = resourceRoleRepository.findAll();
         List<Resource> resources = resourceRepository.findAllResource();
@@ -78,7 +82,7 @@ public class RoleService {
             List<String> roles = new ArrayList<>();
             resource.getResourceRoles().forEach(rr ->{
                 roles.add(
-                        rr.getRole().getRoleName()
+                        rr.getRole().getRoleName().toString()
                 );
             });
             ret.put(requestMatcher, roles);
@@ -89,10 +93,32 @@ public class RoleService {
 
     }
 
+    /**
+     * 리소스에 대한 권한 매핑 정보를 반환함
+     * @return resource-role mapping
+     */
     public LinkedHashMap<RequestMatcher, List<String >> getResourceMap(){
         if(resourceMap==null){
             setResourceMap();
         }
         return this.resourceMap;
+    }
+
+    public  String getRoleHierarchyInfo(){
+        List<Role> roles = roleRepository.findChildRole();
+        StringBuilder sb = new StringBuilder();
+        for(Role childRole : roles){
+            String childRoleName = childRole.getRoleName().toString();
+            String parentRoleName = childRole.getParentRole().getRoleName().toString();
+
+            /*
+               Child가 Parent보다 더 많은 권한을 보유함
+             */
+            sb.append(childRoleName);
+            sb.append(" > ");
+            sb.append(parentRoleName);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
