@@ -60,11 +60,16 @@ public class RoleService {
     }
 
     private void setMemberRole(Member member, Role role){
-        em.persist(new MemberRole(member, role));
+        MemberRole memberRole = MemberRole.createMemberRole(member, role);
+        em.persist(memberRole);
     }
 
     private void setResourceRole(Resource resource, Role role){
-        em.persist(new ResourceRole(resource, role));
+        ResourceRole resourceRole = ResourceRole.createResourceRole(
+                resource,
+                role
+        );
+        em.persist(resourceRole);
     }
 
 
