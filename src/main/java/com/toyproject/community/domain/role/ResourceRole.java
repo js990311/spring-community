@@ -15,7 +15,7 @@ public class ResourceRole {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_name")
     private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY)

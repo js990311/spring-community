@@ -1,18 +1,8 @@
+server:
+  shutdown: graceful
+
 spring:
-#  h2:
-#    console:
-#      enabled: true
-
-  datasource:
-    driver-class-name:
-      com.mysql.cj.jdbc.Driver
-    url : jdbc:mysql://localhost:3306/spring_community
-    # TODO 암호화
-    username: test
-    password: password
-
   jpa:
-    generate-ddl: true
     properties:
       hibernate:
         # show_sql: true
@@ -21,6 +11,8 @@ spring:
         default_batch_fetch_size : 100
         dialect:
           org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
 
   messages:
     basename: validation, securityMessage
@@ -30,6 +22,18 @@ spring:
       filter:
         enabled: true
 
+  docker:
+    compose:
+      lifecycle-management: start-and-stop
+      start:
+        command: up
+      stop:
+        command: down
+        timeout: 1m
+      # Test 실행시에도 docker compose 실행하도록 지시
+      skip:
+        in-tests: false
+
 logging:
   level:
     # spring logging group. include org.hibernate.SQL
@@ -37,6 +41,3 @@ logging:
     web: debug # include web, http,
     com.toyproject.community:
       debug
-#    org:
-#      hibernate:
-#        SQL : debug
