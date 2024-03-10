@@ -1,8 +1,8 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Board;
-import com.toyproject.community.domain.Post;
 import com.toyproject.community.domain.dto.BoardDto;
+import com.toyproject.community.domain.view.PageNumberInfo;
 import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.domain.form.BoardForm;
 import com.toyproject.community.service.BoardService;
@@ -10,6 +10,7 @@ import com.toyproject.community.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,7 +28,10 @@ public class BoardController {
     private final PostService postService;
 
     @GetMapping("/{boardId}")
-    public String boardName(@PathVariable("boardId") Long boardId, Model model){
+    public String boardName(
+            @PathVariable("boardId") Long boardId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model){
         Board board;
         try{
             board = boardService.findById(boardId);
@@ -35,10 +39,14 @@ public class BoardController {
             // TODO error 페이지
             return "redirect:/b/list";
         }
-        List<Post> posts = postService.readPostByBoardId(boardId);
-        List<ReadPostDto> postDtos = posts.stream().map(ReadPostDto::new).collect(Collectors.toList());
-        model.addAttribute("posts",postDtos);
+
+        Page<ReadPostDto> readPostDtos = postService.readPostByBoardId(boardId, page);
+        PageNumberInfo pageNumberInfo = new PageNumberInfo(readPostDtos.getNumber(), readPostDtos.getTotalPages() - 1);
+
+        model.addAttribute("posts",readPostDtos.getContent());
         model.addAttribute("board", board);
+        model.addAttribute("pages", pageNumberInfo);
+
         return "postListInBoard";
     }
 
@@ -66,8 +74,13 @@ public class BoardController {
             log.debug("errors = {}", bindingResult);
             return "createBoard";
         }
-        boardService.createBoard(boardForm.getName(), boardForm.getDescription());
-        log.info("POST /b/create?desc=",boardForm.getDescription());
+        try{
+            boardService.createBoard(boardForm.getName(), boardForm.getDescription());
+        }catch (Exception e){
+            bindingResult.rejectValue("name","Duplicate");
+            return "createBoard";
+        }
+
         return "redirect:/b/list";
     }
 }

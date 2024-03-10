@@ -13,6 +13,9 @@ import com.toyproject.community.security.authentication.MemberDetails;
 import com.toyproject.community.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -57,10 +60,23 @@ public class MemberService implements UserDetailsService {
         return memberRepository.existsByEmailOrNickname(email, nickname);
     }
 
-    public List<ReadPostDto> readAllPostByMember(Long memberId){
-        List<Post> memberPost = postRepository.findByMemberId(memberId);
-        List<ReadPostDto> readPostDtos = memberPost.stream().map(ReadPostDto::new).collect(Collectors.toList());
+    public Page<ReadPostDto> readAllPostByMember(Long memberId, int page){
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                15,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "creationDateTime"
+                )
+        );
+
+        Page<Post> memberPosts = postRepository.findPageByMemberId(memberId, pageRequest);
+        Page<ReadPostDto> readPostDtos = memberPosts.map(ReadPostDto::new);
         return readPostDtos;
+    }
+
+    public Page<ReadPostDto> readAllPostByMember(Long memberId){
+        return readAllPostByMember(memberId,0);
     }
 
     public List<Comment> readAllCommentByMember(Long memberId){
@@ -77,7 +93,6 @@ public class MemberService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         List<MemberRole> memberRoles = member.getMemberRoles();
 
-        // TODO
         member.getMemberRoles().forEach(role->{
             String auth = role.getRole().getRoleName().toString();
             authorities.add(

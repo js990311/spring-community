@@ -18,14 +18,14 @@
                     <h5 class="mb-1" th:text="${post.title}">
                         게시글 제목
                     </h5>
-                    <!-- TODO jpa auditing
-                    <small th:text="${post.date}">작성일자</small>
-                    -->
+                    <small th:text="${post.creationDateTime}">작성일자</small>
                 </div>
-                <p class="mb-1" th:text="|by ${post.memberName}|"></p>
+                <p class="mb-1" th:text="|by ${post.writer.nickname}|"></p>
             </a>
         </li>
     </ul>
+    <nav th:replace="~{fragment/pagination::post_pagination(${board.id})}"></nav>
+
     <a class="w-100 btn-primary btn"
        th:href="@{/p/create(boardid = ${board.id})}">게시글 작성</a>
 </div>

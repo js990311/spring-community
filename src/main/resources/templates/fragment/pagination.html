@@ -1,0 +1,21 @@
+<nav th:fragment="post_pagination(link)">
+    <ul class="pagination">
+        <li class="page-item"
+            th:classappend="${pages.nowIndex eq 0} ? disabled : _ ">
+            <a class="page-link" th:href="@{${link}(page=${0})}">처음 페이지로</a>
+        </li>
+        <th:block th:each="page : ${pages.pageNumbers}">
+            <li class="page-item">
+                <a class="page-link"
+                   th:classappend="${pages.nowIndex eq page} ? active : _"
+                   th:href="@{${link}(page=${page})}"
+                   th:text="${page+1}"
+                >페이지번호</a>
+            </li>
+        </th:block>
+        <li class="page-item"
+            th:classappend="${pages.nowIndex eq pages.lastIndex} ? disabled : _ ">
+            <a class="page-link" th:href="@{${link}(page=${pages.lastIndex})}">마지막 페이지로</a>
+        </li>
+    </ul>
+</nav>

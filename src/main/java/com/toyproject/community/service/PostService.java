@@ -5,10 +5,14 @@ import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.domain.dto.CreatePostDto;
 import com.toyproject.community.domain.form.PostForm;
+import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.repository.BoardRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,8 +59,22 @@ public class PostService {
         return postRepository.findByBoardName(boardName);
     }
 
-    public List<Post> readPostByBoardId(Long boardId){
-        return postRepository.findByBoardId(boardId);
+    public Page<ReadPostDto> readPostByBoardId(Long boardId){
+        return readPostByBoardId(boardId,0);
+    }
+
+    public Page<ReadPostDto> readPostByBoardId(Long boardId, int page){
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                15,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "creationDateTime"
+                )
+        );
+        Page<Post> posts = postRepository.findPageByBoardId(boardId, pageRequest);
+        Page<ReadPostDto> readPostDtos = posts.map(ReadPostDto::new);
+        return readPostDtos;
     }
 
     @Transactional

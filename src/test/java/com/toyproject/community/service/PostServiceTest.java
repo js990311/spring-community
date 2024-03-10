@@ -4,6 +4,7 @@ import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.domain.dto.CreatePostDto;
+import com.toyproject.community.domain.view.ReadPostDto;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -65,8 +66,8 @@ class PostServiceTest {
         Post post1 = postService.readPostById(postId1);
         Post post2 = postService.readPostById(postId2);
 
-        List<Post> postsInBoard1 = postService.readPostByBoardId(board1.getId());
-        List<Post> postsInBoard2 = postService.readPostByBoardId(board2.getId());
+        List<ReadPostDto> postsInBoard1 = postService.readPostByBoardId(board1.getId()).getContent();
+        List<ReadPostDto> postsInBoard2 = postService.readPostByBoardId(board2.getId()).getContent();
 
         assertEquals(postsInBoard1.get(0).getBoard().getId(), board1.getId(), "board1 test");
         assertEquals(postsInBoard2.get(0).getBoard().getId(), board2.getId(), "board2 test");

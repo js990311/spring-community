@@ -13,6 +13,8 @@
         <p>멤버 닉네임 = <span th:text="${member.nickname}">
             멤버 닉네임
         </span></p>
+        <p th:text="${member.registDate}">가입일자</p>
+        <p th:text="${member.nicknameModifiedDate}">닉네임 변경일자</p>
     </div>
     <!-- 내가 쓴 글 -->
     <h2>내가 쓴 글</h2>
@@ -23,6 +25,9 @@
             <a th:href="@{/b/{boardId}(boardId=${post.board.id})}" th:text="${post.board.name}">게시판 제목</a>
         </li>
     </ul>
+    <!-- 페이지 -->
+    <nav th:replace="~{fragment/pagination::post_pagination(|/member/mypage|)}"></nav>
+
     <!-- 내가 쓴 댓글 -->
 </div>
 </body>

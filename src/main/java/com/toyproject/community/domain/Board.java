@@ -16,7 +16,7 @@ public class Board {
     @Column(name = "board_id")
     private Long id;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
     @Column

@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,6 +23,12 @@ public class Post {
 
     @Column
     private String content;
+
+    @Column(name = "creation_date_time")
+    private LocalDateTime creationDateTime;
+
+    @Column(name = "modification_date_time")
+    private LocalDateTime modificationDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
@@ -39,6 +48,7 @@ public class Post {
         this.content = postDto.getContent();
         this.board = postDto.getBoard();
         this.member = postDto.getMember();
+        this.creationDateTime = LocalDateTime.now();
     }
 
     private void setTitle(String title){
@@ -49,13 +59,14 @@ public class Post {
         this.content = content;
     }
 
-    public static Post createPost(CreatePostDto postDto){
-        Post post = new Post(postDto);
-        return post;
-    }
-
     public void updatePost(String title, String content){
         setContent(content);
         setTitle(title);
+        this.modificationDateTime = LocalDateTime.now();
+    }
+
+    public static Post createPost(CreatePostDto postDto){
+        Post post = new Post(postDto);
+        return post;
     }
 }

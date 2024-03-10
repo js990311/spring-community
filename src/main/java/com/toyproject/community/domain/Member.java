@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,6 +33,12 @@ public class Member {
     @Column(unique = true)
     private String nickname;
 
+    @Column(name = "regist_date")
+    private LocalDate registDate;
+
+    @Column(name = "nickname_modified_date")
+    private LocalDate nicknameModifiedDate;
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts;
 
@@ -44,6 +52,8 @@ public class Member {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.registDate = LocalDate.now();
+        this.nicknameModifiedDate = LocalDate.now();
     }
 
     public static Member registMember(String email, String password, String nickname){

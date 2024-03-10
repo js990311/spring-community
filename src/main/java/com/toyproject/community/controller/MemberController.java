@@ -3,8 +3,8 @@ package com.toyproject.community.controller;
 import com.toyproject.community.domain.dto.MemberDto;
 import com.toyproject.community.domain.form.LoginMemberForm;
 import com.toyproject.community.domain.form.RegistMemberForm;
+import com.toyproject.community.domain.view.PageNumberInfo;
 import com.toyproject.community.domain.view.ReadPostDto;
-import com.toyproject.community.domain.form.MemberForm;
 import com.toyproject.community.exception.EntityDuplicateException;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.service.MemberService;
@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,9 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
 
 @Controller
 @RequestMapping("/member")
@@ -91,13 +89,20 @@ public class MemberController {
 
     @GetMapping("/mypage")
     public String myPage(
+            @RequestParam(value = "page", defaultValue = "0") int page,
             Model model,Authentication authentication){
+
+        // 멤버 정보 추출
         MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
         MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
-        List<ReadPostDto> readPostDtos = memberService.readAllPostByMember(memberDto.getId());
+
+        // 멤버 작성글 조회
+        Page<ReadPostDto> readPostDtos = memberService.readAllPostByMember(memberDto.getId(),page);
 
         model.addAttribute("member", memberDto);
-        model.addAttribute("posts", readPostDtos);
+        model.addAttribute("posts", readPostDtos.getContent());
+        PageNumberInfo pageNumberInfo = new PageNumberInfo(readPostDtos.getNumber(), readPostDtos.getTotalPages() - 1);
+        model.addAttribute("pages", pageNumberInfo);
 
         return "member/myPage";
     }
