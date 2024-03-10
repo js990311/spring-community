@@ -5,12 +5,19 @@
 </head>
 <body>
 <div id="body-content" class="container">
+  <div class="border p-5">
+    <h1>
+      <a th:href="@{/b/{boardId}(boardId=${post.board.id})}" th:text="${post.board.name}">
+        게시판이름
+      </a>
+    </h1>
+  </div>
   <div class="border" id="post-content">
     <div class="row border-top border-bottom bg-light">
       <p class="col-9 h3" th:text="${post.title}">
         게시글 제목
       </p>
-      <p class="col-3 text-right" th:text="${post.memberName}">작성자 이름 </p>
+      <p class="col-3 text-right" th:text="${post.writer.email}">작성자 이름 </p>
     </div>
     <div>
       <p th:text="${post.content}">게시글 본문</p>

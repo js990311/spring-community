@@ -3,7 +3,7 @@ package com.toyproject.community.controller;
 import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.domain.dto.BoardDto;
-import com.toyproject.community.domain.dto.ReadPostDto;
+import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.domain.form.BoardForm;
 import com.toyproject.community.service.BoardService;
 import com.toyproject.community.service.PostService;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

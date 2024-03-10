@@ -2,6 +2,7 @@ package com.toyproject.community.domain;
 
 import com.toyproject.community.domain.role.MemberRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +19,17 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column
+    @NotNull
+    @Column(unique = true)
     private String email;
 
+    @NotNull
     @Column
     private String password;
+
+    @NotNull
+    @Column(unique = true)
+    private String nickname;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts;
@@ -33,12 +40,13 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<MemberRole> memberRoles;
 
-    Member(String email, String password){
+    Member(String email, String password,String nickname){
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
-    public static Member registMember(String email, String password){
-        return new Member(email, password);
+    public static Member registMember(String email, String password, String nickname){
+        return new Member(email, password,nickname);
     }
 }

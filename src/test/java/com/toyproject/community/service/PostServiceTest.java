@@ -29,7 +29,7 @@ class PostServiceTest {
 
     @Test
     void createPost() {
-        Member member = Member.registMember("testMember", "1234");
+        Member member = Member.registMember("testMember", "1234", "nickname");
         Board board = Board.createBoard("testBoard", "test");
 
         em.persist(member);
@@ -48,7 +48,7 @@ class PostServiceTest {
 
     @Test
     void readPostByBoard() {
-        Member member = Member.registMember("testMember", "1234");
+        Member member = Member.registMember("testMember", "1234", "nickname");
         Board board1 = Board.createBoard("testBoard1", "test");
         Board board2 = Board.createBoard("testBoard2", "test");
 
@@ -79,7 +79,7 @@ class PostServiceTest {
     void readPostByBoardName(){
         String boardName1 = "testBoard1";
         String boardName2 = "testBoard2";
-        Member member = Member.registMember("testMember", "1234");
+        Member member = Member.registMember("testMember", "1234", "nickname");
         Board board1 = Board.createBoard(boardName1, "test");
         Board board2 = Board.createBoard(boardName2, "test");
 
@@ -115,7 +115,7 @@ class PostServiceTest {
 
     @Test
     void updatePost() {
-        Member member = Member.registMember("testMember", "1234");
+        Member member = Member.registMember("testMember", "1234", "nickname");
         Board board = Board.createBoard("testBoard", "test");
 
         em.persist(member);

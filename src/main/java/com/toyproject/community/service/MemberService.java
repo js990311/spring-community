@@ -3,15 +3,16 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.domain.dto.MemberDto;
+import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.domain.role.MemberRole;
+import com.toyproject.community.exception.EntityDuplicateException;
 import com.toyproject.community.repository.CommentRepository;
 import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
 import com.toyproject.community.security.authentication.MemberDetails;
 import com.toyproject.community.service.role.RoleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -24,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
     private final PostRepository postRepository;
@@ -35,27 +38,29 @@ public class MemberService implements UserDetailsService {
     private final RoleService roleService;
 
     @Transactional
-    public Long registMember(String email, String password){
+    public Long registMember(String email, String password, String nickname) throws EntityDuplicateException {
+        if(checkRegistMemberDuplicate(email,password)){
+            if(memberRepository.existsByEmail(email)){
+                throw new EntityDuplicateException("email");
+            }else {
+                throw new EntityDuplicateException("nickname");
+            }
+        }
         String encodedPassword = passwordEncoder.encode(password);
-        Member member = Member.registMember(email, encodedPassword);
+        Member member = Member.registMember(email, encodedPassword, nickname);
         memberRepository.save(member);
         roleService.registMember(member);
         return member.getId();
     }
 
-    public MemberDto loginMember(String email, String password){
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new EntityNotFoundException("member not found"+email)
-        );
-        if(member.getPassword().equals(password)){
-           return new MemberDto(member.getId(),email);
-        }else{
-            throw new RuntimeException();
-        }
+    public boolean checkRegistMemberDuplicate(String email, String nickname){
+        return memberRepository.existsByEmailOrNickname(email, nickname);
     }
 
-    public List<Post> readAllPostByMember(Long memberId){
-        return postRepository.findByMemberId(memberId);
+    public List<ReadPostDto> readAllPostByMember(Long memberId){
+        List<Post> memberPost = postRepository.findByMemberId(memberId);
+        List<ReadPostDto> readPostDtos = memberPost.stream().map(ReadPostDto::new).collect(Collectors.toList());
+        return readPostDtos;
     }
 
     public List<Comment> readAllCommentByMember(Long memberId){

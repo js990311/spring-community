@@ -1,4 +1,4 @@
-package com.toyproject.community.domain.dto;
+package com.toyproject.community.domain.view;
 
 import com.toyproject.community.domain.Comment;
 import lombok.Data;

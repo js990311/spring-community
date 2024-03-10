@@ -18,7 +18,7 @@ public class MemberRole {
     private MemberRoleId memberRoleId;
 
     @MapsId("memberId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "member_id")
     private Member member;
 

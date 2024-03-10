@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+    <title>내정보</title>
+</head>
+<body>
+<div id="body-content" class="container">
+    <!-- 내 로그인 정보 -->
+    <div>
+        <p>멤버 이메일 = <span th:text="${member.email}">
+            멤버 이메일
+        </span></p>
+        <p>멤버 닉네임 = <span th:text="${member.nickname}">
+            멤버 닉네임
+        </span></p>
+    </div>
+    <!-- 내가 쓴 글 -->
+    <h2>내가 쓴 글</h2>
+    <hr>
+    <ul>
+        <li th:each="post : ${posts}">
+            <a th:href="@{/p/{postId}(postId=${post.id})}" th:text="${post.title}">게시글 제목</a>
+            <a th:href="@{/b/{boardId}(boardId=${post.board.id})}" th:text="${post.board.name}">게시판 제목</a>
+        </li>
+    </ul>
+    <!-- 내가 쓴 댓글 -->
+</div>
+</body>
+</html>

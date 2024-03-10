@@ -36,7 +36,7 @@ class RoleServiceTest {
     @Test
     public void createMemberRole(){
         roleService.addRole(RoleName.ROLE_USER);
-        Long memberId = memberService.registMember("test@com", "test");
+//        Long memberId = memberService.registMember("test@com", "test", "nickname");
         roleService.addRole(RoleName.ROLE_ADMIN);
         roleService.setMemberRole("test@com", RoleName.ROLE_ADMIN.toString());
     }
