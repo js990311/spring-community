@@ -15,6 +15,9 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post,Long> {
     List<Post> findByBoardId(Long boardId);
+
+    @Query(value = "select p from Post p join fetch p.board b join fetch p.member m where b.id = :boardId",
+    countQuery = "select count(p) from Post p join p.board b where b.id = :boardId")
     Page<Post> findPageByBoardId(Long boardId, Pageable pageable);
     List<Post> findByMemberId(Long memberId);
 

@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,6 +64,7 @@ public class BoardController {
     }
 
     @GetMapping("/create")
+    @PreAuthorize("@authz.decide(#root)")
     public String createBoardView(Model model){
         BoardForm boardForm = new BoardForm();
         model.addAttribute(boardForm);

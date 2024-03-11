@@ -9,12 +9,16 @@ import com.toyproject.community.domain.form.CommentForm;
 import com.toyproject.community.domain.form.PostForm;
 import com.toyproject.community.domain.form.UpdatePostForm;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
+import com.toyproject.community.security.authorization.annotation.IsUser;
+import com.toyproject.community.security.authorization.annotation.PostUpdateAuthorize;
 import com.toyproject.community.service.CommentService;
 import com.toyproject.community.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +36,7 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
 
+    @IsUser
     @GetMapping("/create")
     public String createPostView(@RequestParam("boardid") Long boardid, Model model){
         PostForm postForm = new PostForm();
@@ -40,6 +45,7 @@ public class PostController {
         return "createPost";
     }
 
+    @IsUser
     @PostMapping("/create")
     public String createPost(@Valid @ModelAttribute PostForm postForm, BindingResult bindingResult, Authentication authentication, Model model){
         if(bindingResult.hasErrors()){
@@ -77,28 +83,31 @@ public class PostController {
         return "post";
     }
 
-    @GetMapping("/{postID}/delete")
-    public String deletePost(@PathVariable("postID") Long postId){
+    @PreAuthorize("@post_authz.decide_delete(#postId, authentication)")
+    @GetMapping("/{postId}/delete")
+    public String deletePost(@P("postId") @PathVariable("postId") Long postId){
         postService.deletePost(postId);
         return "redirect:/";
     }
 
+    @PostUpdateAuthorize
     @GetMapping("/{postID}/update")
-    public String updatePostView(@PathVariable("postID") Long postId, Model model, Authentication authentication){
-        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
-        Member member = memberInfo.getMember();
+    public String updatePostView(
+            @P("postId") @PathVariable("postID") Long postId, Model model){
         Post post = postService.readPostById(postId);
         UpdatePostForm postForm = new UpdatePostForm(post);
         model.addAttribute("postForm", postForm);
         return "updatePost";
     }
 
+    @PostUpdateAuthorize
     @PutMapping("/{postID}/update")
     public String updatePostView(@PathVariable("postID") Long postId, @Valid @ModelAttribute(name = "postForm") UpdatePostForm updatePostForm, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             log.debug("errors={}", bindingResult);
             return "updatePost";
         }
+
         postService.updatePost(updatePostForm.getId(), updatePostForm.getTitle(), updatePostForm.getContent());
         return "redirect:/p/" + postId;
     }
