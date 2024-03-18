@@ -7,6 +7,7 @@ import com.toyproject.community.domain.view.PageNumberInfo;
 import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.exception.EntityDuplicateException;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
+import com.toyproject.community.security.authorization.annotation.IsAuthenticated;
 import com.toyproject.community.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -81,12 +82,14 @@ public class MemberController {
         return "forward:/member/login_process";
     }
 
+    @IsAuthenticated
     @GetMapping("/logout")
     public String getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication){
         logoutHandler.logout(request, response, authentication);
         return "redirect:/";
     }
 
+    @IsAuthenticated
     @GetMapping("/mypage")
     public String myPage(
             @RequestParam(value = "page", defaultValue = "0") int page,

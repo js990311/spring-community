@@ -1,5 +1,6 @@
 package com.toyproject.community.controller;
 
+import com.toyproject.community.controller.util.RecentPostCookie;
 import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
@@ -12,7 +13,11 @@ import com.toyproject.community.security.authentication.MemberAuthenticationToke
 import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.security.authorization.annotation.PostUpdateAuthorize;
 import com.toyproject.community.service.CommentService;
+import com.toyproject.community.service.PostQueryService;
 import com.toyproject.community.service.PostService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.DocFlavor;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +40,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
+    private final PostQueryService postQueryService;
     private final CommentService commentService;
 
     @IsUser
@@ -55,35 +62,38 @@ public class PostController {
         MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
         Member member = memberInfo.getMember();
         postService.createPost(postForm, member);
-        StringBuilder sb = new StringBuilder();
         return "redirect:/b/" + postForm.getBoardId();
     }
 
     @GetMapping("/{postID}")
-    public String readPost(@PathVariable("postID") Long postId, Model model){
-        Post post;
-        try{
-            post = postService.readPostById(postId);
-        }catch (Exception e){
-            // TODO error 페이지
-            return "redirect:/";
-        }
+    public String readPost(@PathVariable("postID") Long postId, Model model,
+                           HttpServletRequest request, HttpServletResponse response
+    ){
+        // 조회수 중복 체크를 위한 cookie
+        RecentPostCookie recentPostCookie = new RecentPostCookie(request);
+        boolean isRecentPost = recentPostCookie.isRecentPost(postId);
 
-        ReadPostDto readPostDto = new ReadPostDto(post);
+        // Post
+        ReadPostDto readPostDto = postQueryService.readPostById(postId, isRecentPost);
         model.addAttribute("post",readPostDto);
 
-        List<Comment> comments = commentService.readAllCommentByPost(postId);
-        List<ReadCommentDto> readCommentDto = comments.stream().map(ReadCommentDto::new).collect(Collectors.toList());
+        // Comment
+        List<ReadCommentDto> readCommentDto = postQueryService.readAllCommentByPost(postId);
         model.addAttribute("comments", readCommentDto);
 
+        // comment Form
         CommentForm commentForm = new CommentForm();
         commentForm.setPostId(postId);
         model.addAttribute("commentForm", commentForm);
 
+        // 조회수 중복 체크를 위한 cookie 설정
+        Cookie cookie = recentPostCookie.addPostInRecentPost(postId);
+        response.addCookie(cookie);
+
         return "post";
     }
 
-    @PreAuthorize("@post_authz.decide_delete(#postId, authentication)")
+    @PreAuthorize("@post_authz.delete(#postId, authentication)")
     @GetMapping("/{postId}/delete")
     public String deletePost(@P("postId") @PathVariable("postId") Long postId){
         postService.deletePost(postId);

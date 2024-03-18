@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("@post_authz.decide_update(#postId, authentication)")
+@PreAuthorize("@post_authz.update(#postId, authentication)")
 public @interface PostUpdateAuthorize {
 }

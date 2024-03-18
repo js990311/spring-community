@@ -26,7 +26,7 @@ public class PostAuthorizationLogic {
 
     /* Controller level */
 
-    public boolean decide_delete(Long postId, Authentication authentication){
+    public boolean delete(Long postId, Authentication authentication){
         Post post = findPostById(postId);
         if(post == null){
             return false;
@@ -43,39 +43,12 @@ public class PostAuthorizationLogic {
         return post.getMember().getEmail().equals(authentication.getName());
     }
 
-    public boolean decide_update(Long postId, Authentication authentication){
+    public boolean update(Long postId, Authentication authentication){
         Post post = findPostById(postId);
         if(post == null){
             return false;
         }
 
         return post.getMember().getEmail().equals(authentication.getName());
-    }
-
-    /* Service level */
-
-    public boolean decide(Post post, Member member){
-        if(post == null){
-            return false;
-        }
-        return post.getMember().getId()
-                .equals(member.getId());
-    }
-
-    public boolean decide(Long postId, Long memberId){
-        Post post = findPostById(postId);
-        return decide(post, memberId);
-    }
-
-    public boolean decide(Post post, Long memberId){
-        if(post == null){
-            return false;
-        }
-        return post.getMember().getId().equals(memberId);
-    }
-
-    public boolean decide(Long postId, Member member){
-        Post post = findPostById(postId);
-        return decide(post, member);
     }
 }

@@ -3,6 +3,7 @@ package com.toyproject.community.controller;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.form.CommentForm;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
+import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
+    @IsUser
     @PostMapping("/create")
     public String createComment(@ModelAttribute CommentForm commentForm, Authentication authentication){
         MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;

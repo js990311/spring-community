@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +40,8 @@ public class Post {
     @JoinColumn(name = "writer_id")
     private Member member;
 
+    @Column(columnDefinition = "integer default 0")
+    private Long viewCount;
 
     /**
      * domain 패키지 외부에선 조작하지 못하도록 protected 접근 제한자
@@ -51,18 +55,15 @@ public class Post {
         this.creationDateTime = LocalDateTime.now();
     }
 
-    private void setTitle(String title){
-        this.title = title;
-    }
-
-    private void setContent(String content){
-        this.content = content;
-    }
-
     public void updatePost(String title, String content){
-        setContent(content);
-        setTitle(title);
+        this.content = content;
+        this.title = title;
         this.modificationDateTime = LocalDateTime.now();
+    }
+
+    public void increasePostViewCount(){
+        log.debug("increasePostView");
+        this.viewCount += 1;
     }
 
     public static Post createPost(CreatePostDto postDto){

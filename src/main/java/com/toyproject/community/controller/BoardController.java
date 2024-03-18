@@ -5,6 +5,7 @@ import com.toyproject.community.domain.dto.BoardDto;
 import com.toyproject.community.domain.view.PageNumberInfo;
 import com.toyproject.community.domain.view.ReadPostDto;
 import com.toyproject.community.domain.form.BoardForm;
+import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.service.BoardService;
 import com.toyproject.community.service.PostService;
 import jakarta.validation.Valid;
@@ -63,8 +64,10 @@ public class BoardController {
         return "boardList";
     }
 
+    /* -- Create Board -- */
+
     @GetMapping("/create")
-    @PreAuthorize("@authz.decide(#root)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String createBoardView(Model model){
         BoardForm boardForm = new BoardForm();
         model.addAttribute(boardForm);
@@ -72,6 +75,7 @@ public class BoardController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String createBoard(@Valid @ModelAttribute BoardForm boardForm, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             log.debug("errors = {}", bindingResult);
@@ -86,4 +90,5 @@ public class BoardController {
 
         return "redirect:/b/list";
     }
+
 }

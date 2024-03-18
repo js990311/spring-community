@@ -14,10 +14,23 @@
   </div>
   <div class="border" id="post-content">
     <div class="row border-top border-bottom bg-light">
-      <p class="col-9 h3" th:text="${post.title}">
-        게시글 제목
-      </p>
-      <p class="col-3 text-right" th:text="${post.writer.nickname}">작성자 이름 </p>
+      <div class="row">
+        <p class="h3 col-9" th:text="${post.title}">
+          게시글 제목
+        </p>
+        <p class="col-3">
+          <span th:text="${post.creationDateTime}">작성시간</span>
+        </p>
+      </div>
+      <div class="row">
+        <div class="col-9">
+          <span th:text="${post.writer.nickname}">작성자 이름 </span>
+        </div>
+        <div class="col-3">
+          <span>조회수 = </span>
+          <span th:text="${post.viewCount}">조회수</span>
+        </div>
+      </div>
     </div>
     <div>
       <p th:text="${post.content}">게시글 본문</p>

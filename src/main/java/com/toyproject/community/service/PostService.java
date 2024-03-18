@@ -10,6 +10,7 @@ import com.toyproject.community.repository.BoardRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -52,8 +54,12 @@ public class PostService {
     }
 
     public Post readPostById(Long postId){
-        Post post = postRepository.findById(postId).orElseThrow();
-        return post;
+        return postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Transactional
+    public void increateViewCount(Post post){
+        post.increasePostViewCount();
     }
 
 

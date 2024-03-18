@@ -19,6 +19,9 @@ public class Board {
     @Column(unique = true)
     private String name;
 
+    @Column(unique = true)
+    private String alias;
+
     @Column
     private String description;
 
