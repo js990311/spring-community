@@ -6,8 +6,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Getter
+@Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
 
@@ -18,6 +22,21 @@ public class Comment {
 
     @Column
     private String content;
+
+    @Column
+    private Long depth;
+
+    @Column(name = "creation_date_time")
+    private LocalDateTime creationDateTime;
+
+    /* FK */
+
+    @OneToMany(mappedBy = "parentComment")
+    private List<Comment> childComment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parentComment;
 
     @ManyToOne
     @JoinColumn(name="post_id")
@@ -31,14 +50,25 @@ public class Comment {
         this.content = content;
     }
 
+    void setParentComment(Comment parentComment){
+        this.parentComment = parentComment;
+        this.depth = this.parentComment.getDepth() + 1;
+    }
+
     Comment(CommentDto commentDto){
         this.content = commentDto.getContent();
         this.post = commentDto.getPost();
         this.member = commentDto.getWriter();
+        this.depth = 0l;
+        this.creationDateTime = LocalDateTime.now();
     }
 
     public static Comment createComment(CommentDto commentDto){
         return new Comment(commentDto);
+    }
+
+    public static void setParentComment(Comment comment, Comment parentComment){
+        comment.setParentComment(parentComment);
     }
 
     public void updateComment(String content){

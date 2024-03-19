@@ -47,26 +47,66 @@
 
   <ul class="my-5 bg-body rounded shodow-sm list-group">
     <h5>댓글목록</h5>
-    <li class="text-body-secondary list-group-item" th:each="comment : ${comments}">
+    <li class="text-body-secondary list-group-item" th:each="comment : ${comments}" th:id="${comment.id}">
       <div class="row">
-        <p class="col-10" th:text="${comment.writer}">작성자</p>
-        <a th:href="@{/comment/{commentId}/delete(commentId=${comment.id})}" class="col-2">삭제</a>
+        <div class="col-10 w-100">
+          <a      th:if="${comment.parentId}"
+                  th:href="|#${comment.parentId}|" th:text="${comment.parentWriter}"></a>
+          <p th:text="${comment.writer}">작성자</p>
+        </div>
+        <p class="col-2">
+          <button th:onclick="|createSubComment(${comment.id})|">
+            대댓글달기
+          </button>
+          <a th:href="@{/comment/{commentId}/delete(commentId=${comment.id})}">삭제</a>
+        </p>
       </div>
       <p th:text="${comment.content}">댓글 내용</p>
+      <!-- start:subcomment form -->
+      <div class="d-none">
+        <div class="row">
+          <div class="col-11">
+            <p class="w-100">대댓글 작성하기</p>
+          </div>
+          <button class="col-1">
+            삭제
+          </button>
+        </div>
+        <form th:action="@{/comment/{commentId}/create(commentId=${comment.id})}" method="post" th:object="${commentForm}">
+          <div class="row">
+            <div class="col-10">
+              <input type="hidden" th:field="*{postId}">
+              <input type="text" class="w-100 h-100" th:field="*{commentContent}">
+            </div>
+            <div class="col-2">
+              <button type="submit" class="w-100 btn h-100">제출</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- end:subcomment form -->
     </li>
   </ul>
 
   <form action="/comment/create" method="post" th:object="${commentForm}">
     <div class="row">
       <div class="col-10">
-        <input type="text" th:field="*{commentContent}" class="w-100">
         <input type="hidden" th:field="*{postId}">
+        <input type="text" th:field="*{commentContent}" class="w-100">
       </div>
       <div class="col-2">
         <button type="submit" class="w-100 btn">제출</button>
       </div>
     </div>
   </form>
+
+  <script>
+    let createSubComment = (commentId) => {
+      const subCommentTarget = document.getElementById(`${commentId}`).lastElementChild;
+      console.log(subCommentTarget);
+      subCommentTarget.classList.toggle('d-none');
+    }
+  </script>
 </div>
 </body>
 </html>

@@ -26,6 +26,15 @@ public class CommentController {
         return "redirect:/p/"+commentForm.getPostId();
     }
 
+    @IsUser
+    @PostMapping("/{commentId}/create")
+    public String createSubComment(@PathVariable Long commentId, @ModelAttribute CommentForm commentForm, Authentication authentication){
+        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
+        Member member = memberInfo.getMember();
+        commentService.createSubComment(commentId, commentForm, member);
+        return "redirect:/p/"+commentForm.getPostId();
+    }
+
     @GetMapping("/{commentId}/delete")
     public String deleteComment(@PathVariable Long commentId, HttpServletRequest request){
         commentService.deleteComment(commentId);

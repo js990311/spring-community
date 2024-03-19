@@ -53,6 +53,7 @@ public class Post {
         this.board = postDto.getBoard();
         this.member = postDto.getMember();
         this.creationDateTime = LocalDateTime.now();
+        this.viewCount = 0l;
     }
 
     public void updatePost(String title, String content){

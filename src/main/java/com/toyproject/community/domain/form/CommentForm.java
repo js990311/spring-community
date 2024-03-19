@@ -1,5 +1,6 @@
 package com.toyproject.community.domain.form;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

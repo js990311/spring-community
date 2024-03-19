@@ -13,7 +13,10 @@ import org.apache.tomcat.util.http.parser.Cookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -38,8 +41,25 @@ public class PostQueryService {
     }
 
     public List<ReadCommentDto> readAllCommentByPost(Long postId){
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        List<ReadCommentDto> readCommentDto = comments.stream().map(ReadCommentDto::new).collect(Collectors.toList());
+        List<Comment> queryResult = commentRepository.findByPostId(postId);
+        Map<Long, List<Comment>> commentMap = new LinkedHashMap<>();
+        for(Comment comment : queryResult){
+            if(comment.getParentComment() == null){
+                ArrayList<Comment> comments = new ArrayList<>();
+                comments.add(comment);
+                commentMap.put(comment.getId(), comments);
+            }else{
+                commentMap.get(comment.getParentComment().getId()).add(comment);
+            }
+        }
+
+        List<ReadCommentDto> readCommentDto = new ArrayList<>();
+        for(List<Comment> comments: commentMap.values()){
+            for(Comment comment : comments){
+                ReadCommentDto commentDto = new ReadCommentDto(comment);
+                readCommentDto.add(commentDto);
+            }
+        }
         return readCommentDto;
     }
 }
