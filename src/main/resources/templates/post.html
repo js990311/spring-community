@@ -62,6 +62,7 @@
         </p>
       </div>
       <p th:text="${comment.content}">댓글 내용</p>
+      
       <!-- start:subcomment form -->
       <div class="d-none">
         <div class="row">
@@ -88,6 +89,7 @@
     </li>
   </ul>
 
+  <!-- start : create comment -->
   <form action="/comment/create" method="post" th:object="${commentForm}">
     <div class="row">
       <div class="col-10">
@@ -99,6 +101,7 @@
       </div>
     </div>
   </form>
+  <!-- end : create comment -->
 
   <script>
     let createSubComment = (commentId) => {

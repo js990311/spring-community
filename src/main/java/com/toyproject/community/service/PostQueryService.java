@@ -10,6 +10,8 @@ import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Cookie;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,26 +42,8 @@ public class PostQueryService {
         return readPostDto;
     }
 
+    @Transactional(readOnly = true)
     public List<ReadCommentDto> readAllCommentByPost(Long postId){
-        List<Comment> queryResult = commentRepository.findByPostId(postId);
-        Map<Long, List<Comment>> commentMap = new LinkedHashMap<>();
-        for(Comment comment : queryResult){
-            if(comment.getParentComment() == null){
-                ArrayList<Comment> comments = new ArrayList<>();
-                comments.add(comment);
-                commentMap.put(comment.getId(), comments);
-            }else{
-                commentMap.get(comment.getParentComment().getId()).add(comment);
-            }
-        }
-
-        List<ReadCommentDto> readCommentDto = new ArrayList<>();
-        for(List<Comment> comments: commentMap.values()){
-            for(Comment comment : comments){
-                ReadCommentDto commentDto = new ReadCommentDto(comment);
-                readCommentDto.add(commentDto);
-            }
-        }
-        return readCommentDto;
+        return commentRepository.findByPostId(postId).stream().map(ReadCommentDto::new).toList();
     }
 }
