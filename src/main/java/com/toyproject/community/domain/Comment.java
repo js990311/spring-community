@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +33,9 @@ public class Comment {
     @Column(name = "creation_date_time")
     private LocalDateTime creationDateTime;
 
+    @Column
+    private Boolean isDeleted;
+
     /* 대댓글 계층 구조를 위한 속성 */
 
     @Column
@@ -54,6 +59,7 @@ public class Comment {
     @JoinColumn(name = "parent_id")
     private Comment parentComment;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne
     @JoinColumn(name="post_id")
     private Post post;
@@ -61,6 +67,14 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private Member member;
+
+    public String getContent(){
+        if(this.isDeleted){
+            return "삭제된 댓글입니다";
+        }else{
+            return this.content;
+        }
+    }
 
     private void setContent(String content){
         this.content = content;
@@ -86,6 +100,7 @@ public class Comment {
     Comment(CommentDto commentDto){
         this.content = commentDto.getContent();
         this.creationDateTime = LocalDateTime.now();
+        this.isDeleted = false;
 
         // 계층 정보
         this.depth = 0l;
@@ -95,6 +110,17 @@ public class Comment {
         // 외래키 정보
         this.post = commentDto.getPost();
         this.member = commentDto.getWriter();
+    }
+
+    public boolean deleteComment(){
+        this.isDeleted = true;
+        if(this.childCount == 0){
+            // 자식이 없으면 즉시 삭제
+            return true;
+        }else {
+            // 자식이 있으면 계층 구조 유지를 위해 침묵
+            return false;
+        }
     }
 
     /**
@@ -119,5 +145,18 @@ public class Comment {
 
     public void updateComment(String content){
         setContent(content);
+    }
+
+    public static boolean deleteComment(Comment comment){
+        boolean isDeleteInDB = comment.deleteComment();
+        if(isDeleteInDB){
+            if(comment.getParentComment() != null){
+                // 부모 댓글로 가서 자식 댓글이 하나 감소하였음을 통지
+                comment.getParentComment().decreaseChild();
+            }
+            return true;
+        }else {
+            return false;
+        }
     }
 }

@@ -87,13 +87,38 @@ public class CommentService {
 
     @Transactional
     public void updateComment(Long commentId, String content){
-        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
         comment.updateComment(content);
     }
 
     @Transactional
     public void deleteComment(Long commentId){
-        commentRepository.deleteById(commentId);
+        // 자식 댓글에 대한 삭제 여부
+        Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
+        boolean isDeleteInDB = deleteComment(comment);
+
+        if(isDeleteInDB) {
+            // 자식 댓글이 DB에서 삭제되었음. 부모 댓글이 삭제될 필요가 있는 지 검증 필요
+
+            boolean needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0l);
+            while (needDeleted){
+                Comment parentComment = commentRepository.findDeletedParentCommentByIsDeletedTrueAndChildCount(0l);
+                deleteComment(parentComment);
+                log.warn("needDeleted", needDeleted);
+                needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0l);
+            }
+        }
+    }
+
+    @Transactional
+    public boolean deleteComment(Comment comment){
+        // 시퀀스 번호의 원상복귀
+        boolean isDeleteInDB = Comment.deleteComment(comment);
+        if(isDeleteInDB){
+            commentRepository.decreaseSequence(comment.getGroupId(), comment.getSequence());
+            commentRepository.delete(comment);
+        }
+        return isDeleteInDB;
     }
 
 }

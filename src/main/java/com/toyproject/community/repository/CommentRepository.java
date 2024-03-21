@@ -24,4 +24,12 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
 
     @Query("select max(c.groupId) from Comment c where c.post.id = :postId")
     Long getAvailableGroupId(Long postId);
+
+    @Modifying
+    @Query(value = "update comments set sequence = sequence - 1 where group_id = :groupId and sequence >= :sequence", nativeQuery = true)
+    int decreaseSequence(Long groupId, Long sequence);
+
+    boolean existsDeletedCommentByIsDeletedTrueAndChildCount(long childCount);
+
+    Comment findDeletedParentCommentByIsDeletedTrueAndChildCount(long childCount);
 }
