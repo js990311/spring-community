@@ -1,21 +1,21 @@
-<nav th:fragment="post_pagination(link)">
+<nav th:fragment="post_pagination(pnis, link)"> <!--pni = pageNumberInfo-->
     <ul class="pagination">
         <li class="page-item"
-            th:classappend="${pages.nowIndex eq 0} ? disabled : _ ">
+            th:classappend="${__${pnis}__.nowIndex eq 0} ? disabled : _ ">
             <a class="page-link" th:href="@{${link}(page=${0})}">처음 페이지로</a>
         </li>
-        <th:block th:each="page : ${pages.pageNumbers}">
+        <th:block th:each="page : ${__${pnis}__.pageNumbers}">
             <li class="page-item">
                 <a class="page-link"
-                   th:classappend="${pages.nowIndex eq page} ? active : _"
+                   th:classappend="${__${pnis}__.nowIndex eq page} ? active : _"
                    th:href="@{${link}(page=${page})}"
                    th:text="${page+1}"
                 >페이지번호</a>
             </li>
         </th:block>
         <li class="page-item"
-            th:classappend="${pages.nowIndex eq pages.lastIndex} ? disabled : _ ">
-            <a class="page-link" th:href="@{${link}(page=${pages.lastIndex})}">마지막 페이지로</a>
+            th:classappend="${__${pnis}__.nowIndex eq __${pnis}__.lastIndex} ? disabled : _ ">
+            <a class="page-link" th:href="@{${link}(page=${__${pnis}__.lastIndex})}">마지막 페이지로</a>
         </li>
     </ul>
 </nav>

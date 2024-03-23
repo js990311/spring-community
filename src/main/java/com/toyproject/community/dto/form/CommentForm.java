@@ -1,4 +1,4 @@
-package com.toyproject.community.domain.form;
+package com.toyproject.community.dto.form;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;

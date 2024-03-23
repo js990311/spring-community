@@ -1,24 +1,23 @@
-package com.toyproject.community.domain.view;
+package com.toyproject.community.dto.response;
 
 import com.toyproject.community.domain.Comment;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
-public class ReadCommentDto {
+public class ResponseCommentDto {
     Long id;
     Long parentId;
     String parentWriter;
     String writer;
     String content;
 
-    public ReadCommentDto(Comment comment){
+    public ResponseCommentDto(Comment comment){
         this.id = comment.getId();
         if(comment.getParentComment()!=null) {
             this.parentId = comment.getParentComment().getId();
-            this.parentWriter = comment.getParentComment().getMember().getEmail();
+            this.parentWriter = comment.getParentComment().getMember().getNickname();
         }
-        this.writer = comment.getMember().getEmail();
+        this.writer = comment.getMember().getNickname();
         this.content = comment.getContent();
     }
 }

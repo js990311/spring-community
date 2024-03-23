@@ -1,18 +1,16 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Board;
-import com.toyproject.community.domain.dto.BoardDto;
-import com.toyproject.community.domain.view.PageNumberInfo;
-import com.toyproject.community.domain.view.ReadPostDto;
-import com.toyproject.community.domain.form.BoardForm;
-import com.toyproject.community.security.authorization.annotation.IsUser;
+import com.toyproject.community.dto.BoardDto;
+import com.toyproject.community.dto.response.PageNumberInfo;
+import com.toyproject.community.dto.response.ResponsePostDto;
+import com.toyproject.community.dto.form.BoardForm;
 import com.toyproject.community.service.BoardService;
 import com.toyproject.community.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +41,7 @@ public class BoardController {
             return "redirect:/b/list";
         }
 
-        Page<ReadPostDto> readPostDtos = postService.readPostByBoardId(boardId, page);
+        Page<ResponsePostDto> readPostDtos = postService.readPostByBoardId(boardId, page);
         PageNumberInfo pageNumberInfo = new PageNumberInfo(readPostDtos.getNumber(), readPostDtos.getTotalPages() - 1);
 
         model.addAttribute("posts",readPostDtos.getContent());

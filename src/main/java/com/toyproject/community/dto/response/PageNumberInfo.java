@@ -1,4 +1,4 @@
-package com.toyproject.community.domain.view;
+package com.toyproject.community.dto.response;
 
 import lombok.Getter;
 

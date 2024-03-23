@@ -3,9 +3,9 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.domain.dto.CreatePostDto;
-import com.toyproject.community.domain.form.PostForm;
-import com.toyproject.community.domain.view.ReadPostDto;
+import com.toyproject.community.dto.CreatePostDto;
+import com.toyproject.community.dto.form.PostForm;
+import com.toyproject.community.dto.response.ResponsePostDto;
 import com.toyproject.community.repository.BoardRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,11 +65,11 @@ public class PostService {
         return postRepository.findByBoardName(boardName);
     }
 
-    public Page<ReadPostDto> readPostByBoardId(Long boardId){
+    public Page<ResponsePostDto> readPostByBoardId(Long boardId){
         return readPostByBoardId(boardId,0);
     }
 
-    public Page<ReadPostDto> readPostByBoardId(Long boardId, int page){
+    public Page<ResponsePostDto> readPostByBoardId(Long boardId, int page){
         PageRequest pageRequest = PageRequest.of(
                 page,
                 15,
@@ -81,7 +79,7 @@ public class PostService {
                 )
         );
         Page<Post> posts = postRepository.findPageByBoardId(boardId, pageRequest);
-        Page<ReadPostDto> readPostDtos = posts.map(ReadPostDto::new);
+        Page<ResponsePostDto> readPostDtos = posts.map(ResponsePostDto::new);
         return readPostDtos;
     }
 

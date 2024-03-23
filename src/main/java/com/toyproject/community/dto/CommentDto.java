@@ -1,4 +1,4 @@
-package com.toyproject.community.domain.dto;
+package com.toyproject.community.dto;
 
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;

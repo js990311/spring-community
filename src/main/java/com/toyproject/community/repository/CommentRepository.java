@@ -1,6 +1,9 @@
 package com.toyproject.community.repository;
 
 import com.toyproject.community.domain.Comment;
+import com.toyproject.community.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +35,10 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
     boolean existsDeletedCommentByIsDeletedTrueAndChildCount(long childCount);
 
     Comment findDeletedParentCommentByIsDeletedTrueAndChildCount(long childCount);
+
+    @Query(value = "select c from Comment c join fetch c.post p join fetch c.member m where m.id = :memberId",
+            countQuery = "select count(c) from Comment c where c.member.id = :memberId")
+    Page<Comment> findPageByMemberId(Long memberId, Pageable pageable);
+
+
 }

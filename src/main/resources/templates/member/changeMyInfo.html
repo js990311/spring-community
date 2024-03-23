@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+    <title>내정보</title>
+</head>
+<body>
+<div id="body-content" class="container">
+    <!-- 내 로그인 정보 -->
+    <form action="/member/mypage/change" method="post" th:object="${changeMemberForm}">
+        <input type="hidden" th:field="*{email}"></input>
+        <!-- 닉네임 변경 -->
+        <div>
+            <label for="nickname">닉네임</label>
+            <input type="text" th:field="*{nickname}">
+            <p th:errors="*{nickname}">회원가입 필드 에러</p>
+            <p>
+                (최근변경<span th:text="${changeMemberForm.nicknameModifiedDate}"></span>)
+            </p>
+        </div>
+
+        <!-- 정보 변경을 위한 비밀번호 입력 -->
+        <div>
+            <input type="password" th:field="*{password}">
+            <p th:errors="*{password}">비밀번호 에러</p>
+        </div>
+        <button type="submit">정보 변경하기</button>
+    </form>
+</div>
+</body>
+</html>

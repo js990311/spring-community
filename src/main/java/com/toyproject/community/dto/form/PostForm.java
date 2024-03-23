@@ -1,4 +1,4 @@
-package com.toyproject.community.domain.form;
+package com.toyproject.community.dto.form;
 
 import com.toyproject.community.domain.Post;
 import jakarta.validation.constraints.NotBlank;

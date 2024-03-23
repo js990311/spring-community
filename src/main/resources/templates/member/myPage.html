@@ -13,22 +13,18 @@
         <p>멤버 닉네임 = <span th:text="${member.nickname}">
             멤버 닉네임
         </span></p>
-        <p th:text="${member.registDate}">가입일자</p>
-        <p th:text="${member.nicknameModifiedDate}">닉네임 변경일자</p>
+        <p>
+            닉네임 변경일자 <span th:text="${member.nicknameModifiedDate}"></span>
+        </p>
+        <p>
+            가입일자 : <span th:text="${member.registDate}"></span>
+        </p>
+        <a href="/member/mypage/change">내정보수정</a>
     </div>
-    <!-- 내가 쓴 글 -->
-    <h2>내가 쓴 글</h2>
-    <hr>
-    <ul>
-        <li th:each="post : ${posts}">
-            <a th:href="@{/p/{postId}(postId=${post.id})}" th:text="${post.title}">게시글 제목</a>
-            <a th:href="@{/b/{boardId}(boardId=${post.board.id})}" th:text="${post.board.name}">게시판 제목</a>
-        </li>
-    </ul>
-    <!-- 페이지 -->
-    <nav th:replace="~{fragment/pagination::post_pagination(|/member/mypage|)}"></nav>
-
-    <!-- 내가 쓴 댓글 -->
+    <div>
+        <a href="/member/mypage/post">내가 쓴 글</a>
+        <a href="/member/mypage/comment">내가 쓴 댓글 </a>
+    </div>
 </div>
 </body>
 </html>

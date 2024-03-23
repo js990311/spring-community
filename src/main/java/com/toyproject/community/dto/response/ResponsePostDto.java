@@ -1,21 +1,17 @@
-package com.toyproject.community.domain.view;
+package com.toyproject.community.dto.response;
 
-import com.toyproject.community.domain.Board;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.domain.dto.BoardDto;
-import com.toyproject.community.domain.dto.MemberDto;
+import com.toyproject.community.dto.BoardDto;
+import com.toyproject.community.dto.MemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.lang.reflect.Member;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 @Getter
 @AllArgsConstructor
-public class ReadPostDto {
+public class ResponsePostDto {
     private Long id;
     private String title;
     private String content;
@@ -30,7 +26,7 @@ public class ReadPostDto {
     private BoardDto board;
 
 
-    public ReadPostDto(Post post){
+    public ResponsePostDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();

@@ -1,25 +1,29 @@
-package com.toyproject.community.domain.dto;
+package com.toyproject.community.dto.form;
 
 import com.toyproject.community.domain.Member;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-public class MemberDto {
-    private Long id;
+public class ChangeMemberForm {
     private String email;
+    @NotBlank
     private String nickname;
-    private LocalDate registDate;
+    @NotBlank
+    private String password;
+
     private LocalDate nicknameModifiedDate;
 
-    public MemberDto(Member member){
-        this.id = member.getId();
+    public ChangeMemberForm(){}
+
+    public ChangeMemberForm(Member member){
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.registDate = member.getRegistDate();
         this.nicknameModifiedDate = member.getNicknameModifiedDate();
     }
 }

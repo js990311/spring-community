@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+    <title>내정보</title>
+</head>
+<body>
+<div id="body-content" class="container">
+
+    <!-- 내가 쓴 글 -->
+    <h2>내가 쓴 글</h2>
+    <hr>
+    <ul>
+        <li th:each="post : ${posts}">
+            <a th:href="@{/p/{postId}(postId=${post.id})}" th:text="${post.title}">게시글 제목</a>
+            <a th:href="@{/b/{boardId}(boardId=${post.board.id})}" th:text="${post.board.name}">게시판 이름</a>
+        </li>
+    </ul>
+    <!-- 내가 쓴 글 페이지 -->
+    <nav th:replace="~{fragment/pagination::post_pagination('post_pages',|/member/mypage|)}"></nav>
+
+</div>
+</body>
+</html>

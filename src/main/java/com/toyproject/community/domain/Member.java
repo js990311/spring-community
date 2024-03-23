@@ -48,6 +48,10 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<MemberRole> memberRoles;
 
+    public void changeNickname(String nickname){
+        this.nickname = nickname;
+    }
+
     Member(String email, String password,String nickname){
         this.email = email;
         this.password = password;

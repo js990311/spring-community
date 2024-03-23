@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/layout::basic-layout(~{::title}, ~{::#body-content})">
+<head>
+    <title>내정보</title>
+</head>
+<body>
+<div id="body-content" class="container">
+    <!-- 내가 쓴 댓글 -->
+    <h2>내가 쓴 댓글</h2>
+    <hr>
+    <ul>
+        <li th:each="comment : ${comments}">
+            <a th:href="@{/p/{postId}(postId=${comment.postId})}" th:text="${comment.content}">댓글 내역</a>
+            <a th:href="@{/b/{boardId}(boardId=${comment.board.id})}" th:text="${comment.board.name}">게시판 이름</a>
+        </li>
+    </ul>
+    <nav th:replace="~{fragment/pagination::post_pagination('comment_pages',|/member/mypage|)}"></nav>
+
+</div>
+</body>
+</html>

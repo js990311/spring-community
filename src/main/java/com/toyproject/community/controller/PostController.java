@@ -1,14 +1,13 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.controller.util.RecentPostCookie;
-import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
-import com.toyproject.community.domain.view.ReadCommentDto;
-import com.toyproject.community.domain.view.ReadPostDto;
-import com.toyproject.community.domain.form.CommentForm;
-import com.toyproject.community.domain.form.PostForm;
-import com.toyproject.community.domain.form.UpdatePostForm;
+import com.toyproject.community.dto.response.ResponseCommentDto;
+import com.toyproject.community.dto.response.ResponsePostDto;
+import com.toyproject.community.dto.form.CommentForm;
+import com.toyproject.community.dto.form.PostForm;
+import com.toyproject.community.dto.form.UpdatePostForm;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.security.authorization.annotation.PostUpdateAuthorize;
@@ -29,9 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.DocFlavor;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -74,12 +71,12 @@ public class PostController {
         boolean isRecentPost = recentPostCookie.isRecentPost(postId);
 
         // Post
-        ReadPostDto readPostDto = postQueryService.readPostById(postId, isRecentPost);
-        model.addAttribute("post",readPostDto);
+        ResponsePostDto responsePostDto = postQueryService.readPostById(postId, isRecentPost);
+        model.addAttribute("post", responsePostDto);
 
         // Comment
-        List<ReadCommentDto> readCommentDto = postQueryService.readAllCommentByPost(postId);
-        model.addAttribute("comments", readCommentDto);
+        List<ResponseCommentDto> responseCommentDto = postQueryService.readAllCommentByPost(postId);
+        model.addAttribute("comments", responseCommentDto);
 
         // comment Form
         CommentForm commentForm = new CommentForm();

@@ -24,7 +24,7 @@
             </a>
         </li>
     </ul>
-    <nav th:replace="~{fragment/pagination::post_pagination(${board.id})}"></nav>
+    <nav th:replace="~{fragment/pagination::post_pagination('pages',${board.id})}"></nav>
 
     <a class="w-100 btn-primary btn"
        th:href="@{/p/create(boardid = ${board.id})}">게시글 작성</a>

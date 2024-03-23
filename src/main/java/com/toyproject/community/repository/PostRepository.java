@@ -22,6 +22,8 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     Page<Post> findPageByBoardId(Long boardId, Pageable pageable);
     List<Post> findByMemberId(Long memberId);
 
+    @Query(value = "select p from Post p join fetch p.board b join fetch p.member m where m.id = :memberId",
+            countQuery = "select count(p) from Post p where p.member.id = :memberId")
     Page<Post> findPageByMemberId(Long memberId, Pageable pageable);
 
     @Query("select p from Post p join p.board b where b.name = :boardName")

@@ -1,10 +1,14 @@
 package com.toyproject.community.controller;
 
-import com.toyproject.community.domain.dto.MemberDto;
-import com.toyproject.community.domain.form.LoginMemberForm;
-import com.toyproject.community.domain.form.RegistMemberForm;
-import com.toyproject.community.domain.view.PageNumberInfo;
-import com.toyproject.community.domain.view.ReadPostDto;
+import com.toyproject.community.domain.Member;
+import com.toyproject.community.dto.MemberDto;
+import com.toyproject.community.dto.form.ChangeMemberForm;
+import com.toyproject.community.dto.form.LoginMemberForm;
+import com.toyproject.community.dto.form.RegistMemberForm;
+import com.toyproject.community.dto.response.PageNumberInfo;
+import com.toyproject.community.dto.response.ResponseCommentDto;
+import com.toyproject.community.dto.response.ResponseMyPageCommentDto;
+import com.toyproject.community.dto.response.ResponsePostDto;
 import com.toyproject.community.exception.EntityDuplicateException;
 import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.security.authorization.annotation.IsAuthenticated;
@@ -14,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -98,16 +103,80 @@ public class MemberController {
         // 멤버 정보 추출
         MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
         MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
-
-        // 멤버 작성글 조회
-        Page<ReadPostDto> readPostDtos = memberService.readAllPostByMember(memberDto.getId(),page);
-
         model.addAttribute("member", memberDto);
-        model.addAttribute("posts", readPostDtos.getContent());
-        PageNumberInfo pageNumberInfo = new PageNumberInfo(readPostDtos.getNumber(), readPostDtos.getTotalPages() - 1);
-        model.addAttribute("pages", pageNumberInfo);
 
         return "member/myPage";
+    }
+
+    @IsAuthenticated
+    @GetMapping("/mypage/post")
+    public String myPagePost(
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        Model model,Authentication authentication){
+        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
+        MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
+
+        // 멤버 작성글 조회
+        Page<ResponsePostDto> readPostDtos = memberService.readAllPostByMember(memberDto.getId(),page);
+        model.addAttribute("posts", readPostDtos.getContent());
+        PageNumberInfo postPageNI = new PageNumberInfo(readPostDtos.getNumber(), readPostDtos.getTotalPages() - 1);
+        model.addAttribute("post_pages", postPageNI);
+
+        return "member/myPost";
+    }
+
+    @IsAuthenticated
+    @GetMapping("/mypage/comment")
+    public String myPageComment(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model,Authentication authentication){
+
+        // 멤버 정보 추출
+        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
+        MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
+        model.addAttribute("member", memberDto);
+
+        // comments
+        Page<ResponseMyPageCommentDto> readCommentDtos = memberService.readAllCommentByMember(memberDto.getId(), page);
+        model.addAttribute("comments", readCommentDtos.getContent());
+        PageNumberInfo commentPageNI = new PageNumberInfo(readCommentDtos.getNumber(), readCommentDtos.getTotalPages() - 1);
+        model.addAttribute("comment_pages", commentPageNI);
+
+        return "member/myComment";
+    }
+
+    @IsAuthenticated
+    @GetMapping("/mypage/change")
+    public String myPageChageGet(Model model, Authentication authentication){
+        // 멤버 정보 추출
+        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
+        ChangeMemberForm changeMemberForm = new ChangeMemberForm(memberAuthenticationToken.getMember());
+
+        model.addAttribute("changeMemberForm", changeMemberForm);
+
+        return "member/changeMyInfo";
+    }
+
+    @IsAuthenticated
+    @PostMapping("/mypage/change")
+    public String myPageChangePost(@Valid @ModelAttribute("changeMemberForm") ChangeMemberForm changeMemberForm, BindingResult bindingResult, Model model){
+        if(bindingResult.hasErrors()){
+            return "member/changeMyInfo";
+        }
+
+        try {
+            memberService.changeMemberInfo(changeMemberForm);
+        } catch (EntityDuplicateException e) {
+            bindingResult.rejectValue("nickname","Duplicate");
+        } catch (BadCredentialsException e){
+            bindingResult.rejectValue("password","BadCredentials");
+        }finally {
+            if(bindingResult.hasErrors()){
+                return "member/changeMyInfo";
+            }
+        }
+
+        return "redirect:/member/mypage";
     }
 
 }

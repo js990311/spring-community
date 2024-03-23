@@ -1,12 +1,11 @@
 package com.toyproject.community.domain;
 
-import com.toyproject.community.domain.dto.CommentDto;
+import com.toyproject.community.dto.CommentDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

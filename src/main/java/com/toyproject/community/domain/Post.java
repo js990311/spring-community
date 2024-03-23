@@ -1,13 +1,12 @@
 package com.toyproject.community.domain;
 
-import com.toyproject.community.domain.dto.CreatePostDto;
+import com.toyproject.community.dto.CreatePostDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
