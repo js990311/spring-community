@@ -2,7 +2,6 @@ package com.toyproject.community.controller;
 
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.dto.form.CommentForm;
-import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,18 +19,16 @@ public class CommentController {
     @IsUser
     @PostMapping("/create")
     public String createComment(@ModelAttribute CommentForm commentForm, Authentication authentication){
-        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
-        Member member = memberInfo.getMember();
-        commentService.createComment(commentForm, member);
+        String username = authentication.getName();
+        commentService.createComment(commentForm, username);
         return "redirect:/p/"+commentForm.getPostId();
     }
 
     @IsUser
     @PostMapping("/{commentId}/create")
     public String createSubComment(@PathVariable Long commentId, @ModelAttribute CommentForm commentForm, Authentication authentication){
-        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
-        Member member = memberInfo.getMember();
-        commentService.createSubComment(commentId, commentForm, member);
+        String username = authentication.getName();
+        commentService.createSubComment(commentId, commentForm, username);
         return "redirect:/p/"+commentForm.getPostId();
     }
 

@@ -1,6 +1,7 @@
 package com.toyproject.community.security.authentication;
 
 import com.toyproject.community.service.MemberService;
+import jdk.jfr.Frequency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,13 +31,11 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 
         // 인증 성공
         UsernamePasswordAuthenticationToken token;
-        if(userDetails instanceof MemberDetails){
-            token = new MemberAuthenticationToken((MemberDetails) userDetails);
-        }else{
-            token = new UsernamePasswordAuthenticationToken(
-                    userName, null, userDetails.getAuthorities()
-            );
-        }
+        token = new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(),
+                null,
+                userDetails.getAuthorities()
+        );
         return token;
     }
 

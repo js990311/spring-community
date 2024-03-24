@@ -6,6 +6,7 @@ import com.toyproject.community.domain.Post;
 import com.toyproject.community.dto.CommentDto;
 import com.toyproject.community.dto.form.CommentForm;
 import com.toyproject.community.repository.CommentRepository;
+import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,26 +23,20 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
-    public void createComment(CommentForm commentForm, Member member){
+    public void createComment(CommentForm commentForm, String username){
+        Member member = memberRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
         Post post = postRepository.findById(commentForm.getPostId()).orElseThrow(
                 ()->new EntityNotFoundException("entity not found")
         );
+
         CommentDto commentDto = new CommentDto(
                 commentForm.getCommentContent(),
                 member,
                 post
         );
-        createComment(commentDto);
-    }
 
-    /**
-     * 대댓글이 아닌 일반 댓글 작성
-     * Group 번호를 root 댓글의 id와 동일하게 설정
-     * @param commentDto
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void createComment(CommentDto commentDto){
         Comment comment = Comment.createComment(commentDto);
         Long availableGroupId = commentRepository.getAvailableGroupId(commentDto.getPost().getId());
         if(availableGroupId==null) availableGroupId = 0l;
@@ -48,15 +44,17 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+
     /**
      * 대댓글
      * @param parentCommentId 부모 댓글의 아이디
      * @param commentForm 댓글 form
-     * @param member 댓글 작성자
+     * @param username 댓글 작성자
      */
     @Transactional(rollbackFor = Exception.class)
-    public void createSubComment(Long parentCommentId, CommentForm commentForm, Member member){
+    public void createSubComment(Long parentCommentId, CommentForm commentForm, String username){
         // create Comment
+        Member member = memberRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
         Post post = postRepository.findById(commentForm.getPostId()).orElseThrow(EntityNotFoundException::new);
         CommentDto commentDto = new CommentDto(commentForm.getCommentContent(), member, post);
 
@@ -100,12 +98,12 @@ public class CommentService {
         if(isDeleteInDB) {
             // 자식 댓글이 DB에서 삭제되었음. 부모 댓글이 삭제될 필요가 있는 지 검증 필요
 
-            boolean needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0l);
+            boolean needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0L);
             while (needDeleted){
-                Comment parentComment = commentRepository.findDeletedParentCommentByIsDeletedTrueAndChildCount(0l);
+                Comment parentComment = commentRepository.findDeletedParentCommentByIsDeletedTrueAndChildCount(0L);
                 deleteComment(parentComment);
                 log.warn("needDeleted", needDeleted);
-                needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0l);
+                needDeleted = commentRepository.existsDeletedCommentByIsDeletedTrueAndChildCount(0L);
             }
         }
     }

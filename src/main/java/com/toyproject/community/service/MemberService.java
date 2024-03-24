@@ -3,6 +3,7 @@ package com.toyproject.community.service;
 import com.toyproject.community.domain.Comment;
 import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
+import com.toyproject.community.dto.MemberDto;
 import com.toyproject.community.dto.form.ChangeMemberForm;
 import com.toyproject.community.dto.response.ResponseMyPageCommentDto;
 import com.toyproject.community.dto.response.ResponsePostDto;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -42,6 +44,7 @@ public class MemberService implements UserDetailsService {
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+
 
     /**
      * 회원가입 처리
@@ -152,5 +155,11 @@ public class MemberService implements UserDetailsService {
         // User user = new User(member.getEmail(), member.getPassword(), authorities);
         User user = new MemberDetails(member, authorities);
         return user;
+    }
+
+    public MemberDto findMemberDtoByUsername(String username) {
+        Member member = memberRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
+        MemberDto memberDto = new MemberDto(member);
+        return memberDto;
     }
 }

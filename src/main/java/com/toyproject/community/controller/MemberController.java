@@ -1,16 +1,13 @@
 package com.toyproject.community.controller;
 
-import com.toyproject.community.domain.Member;
 import com.toyproject.community.dto.MemberDto;
 import com.toyproject.community.dto.form.ChangeMemberForm;
 import com.toyproject.community.dto.form.LoginMemberForm;
 import com.toyproject.community.dto.form.RegistMemberForm;
 import com.toyproject.community.dto.response.PageNumberInfo;
-import com.toyproject.community.dto.response.ResponseCommentDto;
 import com.toyproject.community.dto.response.ResponseMyPageCommentDto;
 import com.toyproject.community.dto.response.ResponsePostDto;
 import com.toyproject.community.exception.EntityDuplicateException;
-import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.security.authorization.annotation.IsAuthenticated;
 import com.toyproject.community.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -100,11 +96,8 @@ public class MemberController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model,Authentication authentication){
 
-        // 멤버 정보 추출
-        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
-        MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
+        MemberDto memberDto = memberService.findMemberDtoByUsername(authentication.getName());
         model.addAttribute("member", memberDto);
-
         return "member/myPage";
     }
 
@@ -113,8 +106,8 @@ public class MemberController {
     public String myPagePost(
         @RequestParam(value = "page", defaultValue = "0") int page,
         Model model,Authentication authentication){
-        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
-        MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
+
+        MemberDto memberDto = memberService.findMemberDtoByUsername(authentication.getName());
 
         // 멤버 작성글 조회
         Page<ResponsePostDto> readPostDtos = memberService.readAllPostByMember(memberDto.getId(),page);
@@ -132,8 +125,7 @@ public class MemberController {
             Model model,Authentication authentication){
 
         // 멤버 정보 추출
-        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
-        MemberDto memberDto = new MemberDto(memberAuthenticationToken.getMember());
+        MemberDto memberDto = memberService.findMemberDtoByUsername(authentication.getName());
         model.addAttribute("member", memberDto);
 
         // comments
@@ -149,8 +141,8 @@ public class MemberController {
     @GetMapping("/mypage/change")
     public String myPageChageGet(Model model, Authentication authentication){
         // 멤버 정보 추출
-        MemberAuthenticationToken memberAuthenticationToken = (MemberAuthenticationToken) authentication;
-        ChangeMemberForm changeMemberForm = new ChangeMemberForm(memberAuthenticationToken.getMember());
+        MemberDto memberDto = memberService.findMemberDtoByUsername(authentication.getName());
+        ChangeMemberForm changeMemberForm = new ChangeMemberForm(memberDto);
 
         model.addAttribute("changeMemberForm", changeMemberForm);
 

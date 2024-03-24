@@ -7,6 +7,7 @@ import com.toyproject.community.dto.CreatePostDto;
 import com.toyproject.community.dto.form.PostForm;
 import com.toyproject.community.dto.response.ResponsePostDto;
 import com.toyproject.community.repository.BoardRepository;
+import com.toyproject.community.repository.MemberRepository;
 import com.toyproject.community.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,11 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
-    public Long createPost(PostForm postForm, Member member){
+    @Transactional
+    public Long createPost(PostForm postForm, String username){
+        Member member = memberRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
         Board board = boardRepository.findById(postForm.getBoardId()).orElseThrow(
                 ()->new EntityNotFoundException("board not found")
         );
@@ -36,7 +40,9 @@ public class PostService {
                 postForm.getTitle(),
                 postForm.getContent()
         );
-        return createPost(createPostDto);
+        Post post = Post.createPost(createPostDto);
+        postRepository.save(post);
+        return post.getId();
     }
 
     @Transactional

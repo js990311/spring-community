@@ -1,17 +1,14 @@
 package com.toyproject.community.controller;
 
 import com.toyproject.community.controller.util.RecentPostCookie;
-import com.toyproject.community.domain.Member;
 import com.toyproject.community.domain.Post;
 import com.toyproject.community.dto.response.ResponseCommentDto;
 import com.toyproject.community.dto.response.ResponsePostDto;
 import com.toyproject.community.dto.form.CommentForm;
 import com.toyproject.community.dto.form.PostForm;
 import com.toyproject.community.dto.form.UpdatePostForm;
-import com.toyproject.community.security.authentication.MemberAuthenticationToken;
 import com.toyproject.community.security.authorization.annotation.IsUser;
 import com.toyproject.community.security.authorization.annotation.PostUpdateAuthorize;
-import com.toyproject.community.service.CommentService;
 import com.toyproject.community.service.PostQueryService;
 import com.toyproject.community.service.PostService;
 import jakarta.servlet.http.Cookie;
@@ -38,7 +35,6 @@ public class PostController {
 
     private final PostService postService;
     private final PostQueryService postQueryService;
-    private final CommentService commentService;
 
     @IsUser
     @GetMapping("/create")
@@ -51,14 +47,13 @@ public class PostController {
 
     @IsUser
     @PostMapping("/create")
-    public String createPost(@Valid @ModelAttribute PostForm postForm, BindingResult bindingResult, Authentication authentication, Model model){
+    public String createPost(@Valid @ModelAttribute PostForm postForm, BindingResult bindingResult, Authentication authentication){
         if(bindingResult.hasErrors()){
             log.debug("errors={}",bindingResult);
             return "createPost";
         }
-        MemberAuthenticationToken memberInfo = (MemberAuthenticationToken) authentication;
-        Member member = memberInfo.getMember();
-        postService.createPost(postForm, member);
+
+        postService.createPost(postForm, authentication.getName());
         return "redirect:/b/" + postForm.getBoardId();
     }
 
