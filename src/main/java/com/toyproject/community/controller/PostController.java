@@ -8,7 +8,8 @@ import com.toyproject.community.dto.form.CommentForm;
 import com.toyproject.community.dto.form.PostForm;
 import com.toyproject.community.dto.form.UpdatePostForm;
 import com.toyproject.community.security.authorization.annotation.IsUser;
-import com.toyproject.community.security.authorization.annotation.PostUpdateAuthorize;
+import com.toyproject.community.security.authorization.annotation.post.PostDeleteAuthorize;
+import com.toyproject.community.security.authorization.annotation.post.PostUpdateAuthorize;
 import com.toyproject.community.service.PostQueryService;
 import com.toyproject.community.service.PostService;
 import jakarta.servlet.http.Cookie;
@@ -17,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -85,7 +85,7 @@ public class PostController {
         return "post";
     }
 
-    @PreAuthorize("@post_authz.delete(#postId, authentication)")
+    @PostDeleteAuthorize
     @GetMapping("/{postId}/delete")
     public String deletePost(@P("postId") @PathVariable("postId") Long postId){
         postService.deletePost(postId);
@@ -104,7 +104,7 @@ public class PostController {
 
     @PostUpdateAuthorize
     @PutMapping("/{postID}/update")
-    public String updatePostView(@PathVariable("postID") Long postId, @Valid @ModelAttribute(name = "postForm") UpdatePostForm updatePostForm, BindingResult bindingResult){
+    public String updatePostView(@PathVariable("postID") Long postId, @Valid @ModelAttribute(name = "postForm") UpdatePostForm updatePostForm, BindingResult bindingResult, HttpServletRequest request){
         if(bindingResult.hasErrors()){
             log.debug("errors={}", bindingResult);
             return "updatePost";

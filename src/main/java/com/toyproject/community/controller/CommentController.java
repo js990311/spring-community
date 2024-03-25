@@ -1,8 +1,8 @@
 package com.toyproject.community.controller;
 
-import com.toyproject.community.domain.Member;
 import com.toyproject.community.dto.form.CommentForm;
 import com.toyproject.community.security.authorization.annotation.IsUser;
+import com.toyproject.community.security.authorization.annotation.comment.CommentDeleteAuthorize;
 import com.toyproject.community.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +32,18 @@ public class CommentController {
         return "redirect:/p/"+commentForm.getPostId();
     }
 
+
+    @CommentDeleteAuthorize
     @GetMapping("/{commentId}/delete")
     public String deleteComment(@PathVariable Long commentId, HttpServletRequest request){
         commentService.deleteComment(commentId);
 
-        if(request.getHeader("Referer") != null){
+        String referer = request.getHeader("referer");
+
+        if(referer == null){
             return "redirect:/";
         }else{
-            return "redirect:" + request.getHeader("Referer");
+            return "redirect:" + request.getHeader("referer");
         }
     }
 }

@@ -1,6 +1,5 @@
-package com.toyproject.community.security.authorization.annotation;
+package com.toyproject.community.security.authorization.annotation.post;
 
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.lang.annotation.ElementType;
@@ -10,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("@post_authz.update(#postId, authentication)")
+@PreAuthorize("@authz.update('post',#postId, authentication)")
 public @interface PostUpdateAuthorize {
 }

@@ -1,6 +1,6 @@
 package com.toyproject.community.config;
 
-import com.toyproject.community.security.authorization.CustomAuthorizationManager;
+import com.toyproject.community.security.authorization.manager.CustomAuthorizationManager;
 import com.toyproject.community.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

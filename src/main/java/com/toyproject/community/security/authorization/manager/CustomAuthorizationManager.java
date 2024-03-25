@@ -1,4 +1,4 @@
-package com.toyproject.community.security.authorization;
+package com.toyproject.community.security.authorization.manager;
 
 import com.toyproject.community.service.role.RoleService;
 import jakarta.servlet.http.HttpServletRequest;
