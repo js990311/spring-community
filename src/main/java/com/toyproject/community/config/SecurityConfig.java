@@ -1,8 +1,11 @@
 package com.toyproject.community.config;
 
+import com.toyproject.community.repository.MemberRepository;
+import com.toyproject.community.security.authentication.MemberDetailsService;
 import com.toyproject.community.security.authorization.manager.CustomAuthorizationManager;
 import com.toyproject.community.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +18,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.ForwardAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final RoleService roleService;
+    private final MemberRepository memberRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,9 +59,20 @@ public class SecurityConfig {
                     .defaultSuccessUrl("/", true)
                     .failureHandler(failureHandler())
         );
+        http.rememberMe(config->config
+                        .rememberMeServices(rememberMeServices())
+        );
 
         http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
+    }
+
+    @Bean
+    public TokenBasedRememberMeServices rememberMeServices(){
+        TokenBasedRememberMeServices rememberMeService = new TokenBasedRememberMeServices("key", userDetailsService());
+        rememberMeService.setParameter("rememberMe");
+        rememberMeService.setAlwaysRemember(false);
+        return rememberMeService;
     }
 
     @Bean
@@ -73,17 +91,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomAuthorizationManager authorizationManager(){
-        return new CustomAuthorizationManager(roleService, roleHierarchy());
+    public UserDetailsService userDetailsService(){
+        return new MemberDetailsService(memberRepository);
     }
 
-
-    @Deprecated
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console());
+    public CustomAuthorizationManager authorizationManager(){
+        return new CustomAuthorizationManager(roleService, roleHierarchy());
     }
 
     @Bean

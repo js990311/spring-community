@@ -21,7 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MemberController {
     private final MemberService memberService;
+    private final TokenBasedRememberMeServices rememberMeLogoutHandler;
     private final SecurityContextLogoutHandler logoutHandler;
 
     @GetMapping("/regist")
@@ -86,6 +89,7 @@ public class MemberController {
     @IsAuthenticated
     @GetMapping("/logout")
     public String getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication){
+        rememberMeLogoutHandler.logout(request, response, authentication);
         logoutHandler.logout(request, response, authentication);
         return "redirect:/";
     }

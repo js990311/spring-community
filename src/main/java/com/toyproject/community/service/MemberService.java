@@ -38,9 +38,9 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MemberService implements UserDetailsService {
+public class MemberService {
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+        private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
@@ -133,28 +133,6 @@ public class MemberService implements UserDetailsService {
         }
 
         member.changeNickname(changeMemberForm.getNickname());
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username).orElseThrow(
-                ()-> {
-                    return new UsernameNotFoundException("user not found" + username);
-                }
-        );
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        List<MemberRole> memberRoles = member.getMemberRoles();
-
-        member.getMemberRoles().forEach(role->{
-            String auth = role.getRole().getRoleName().toString();
-            authorities.add(
-                    new SimpleGrantedAuthority(auth)
-            );
-        });
-
-        // User user = new User(member.getEmail(), member.getPassword(), authorities);
-        User user = new MemberDetails(member, authorities);
-        return user;
     }
 
     public MemberDto findMemberDtoByUsername(String username) {

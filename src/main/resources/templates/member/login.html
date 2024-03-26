@@ -18,6 +18,10 @@
                 <label for="password">비밀번호</label>
                 <p th:errors="*{password}">비밀번호 필드 에러</p>
             </div>
+            <div>
+                <input type="checkbox" th:field="*{rememberMe}">
+                <label for="rememberMe">자동 로그인</label>
+            </div>
             <div class="row mt-3">
                 <div class="col-6">
                     <a class="btn btn-primary p-2 w-100" href="/member/regist">회원가입</a>

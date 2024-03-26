@@ -9,13 +9,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class MemberAuthenticationProvider implements AuthenticationProvider {
-    private final MemberService memberService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -23,7 +24,7 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
         String userName = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        UserDetails userDetails = memberService.loadUserByUsername(userName);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
         if(!passwordEncoder.matches(password, userDetails.getPassword())){
             throw new BadCredentialsException("Invalid Password");
